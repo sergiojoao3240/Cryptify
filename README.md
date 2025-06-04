@@ -9,7 +9,7 @@ VaultPass is a secure and user-friendly password manager that allows individuals
 - Generate random passwords based on custom criteria (A-Z, a-z, 0-9, symbols)
 - Login with a temporary PIN sent via email
 - Import and export passwords to/from files
-- Check if a password has been compromised (via HaveIBeenPwned) (?)
+- Check if a password has been compromised (via HaveIBeenPwned) (?) -> https://haveibeenpwned.com/Passwords
 - Alert users when passwords are reused across services (?)
 - Organize passwords by category
 - Share passwords via time-limited public links (?)
