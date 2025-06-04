@@ -26,7 +26,7 @@ The system is built around the following core entities:
 - **Category**: Used to classify passwords
 - **UserPin**: Temporary PINs for login via email
 
-[View the database diagram →](DB_Model.png)
+[View the database diagram →](DB_Model.jpg)
 
 ## 🚀 Getting Started
 
