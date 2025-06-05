@@ -1,4 +1,4 @@
-export interface IVault {
+export interface IVaultUser {
     userId: string,
     vaultId: string,
     role: string

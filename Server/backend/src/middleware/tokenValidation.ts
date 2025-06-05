@@ -27,7 +27,7 @@ const tokenValidation = asyncHandler(async (req: RequestExt, res: Response, next
     if (token !== undefined) {
         /* Check if Token is valid */
             /* Get user information */
-            const decodedToken: JwtPayload | string = jwt.verify(token, process.env.JWT_ACCESS_SECRET_KEY!);
+            const decodedToken: JwtPayload | string = jwt.verify(token, process.env.JWT_REFRESH_SECRET_KEY!);
             const user = await User.findById(decodedToken.sub).select('+refresh_token').select('+password');
             if (!user){
                 return next(new ErrorResponse("Access denied!", 403));

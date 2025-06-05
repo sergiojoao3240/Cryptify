@@ -35,7 +35,7 @@ import { errorHandler } from "./utils/response/error";
 // Routes
 import UserRouter from "./routes/userRoute";
 import AuthRouter from "./routes/authRoute";
-
+import VaultRouter from "./routes/vaultRoute";
 
 //_____________IMPORTS__________________
 
@@ -113,6 +113,7 @@ app.use(limiter);
 /* ROUTES */
 app.use("/users", UserRouter);
 app.use("/auth", AuthRouter);
+app.use("/vaults", VaultRouter);
 
 
 /* Error handler middleware */
