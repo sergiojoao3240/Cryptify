@@ -1,6 +1,7 @@
 //_____________IMPORTS__________________
 // Node Models
 import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 // Models
 import User from "../models/userModel";
@@ -120,4 +121,43 @@ const validateLogin = asyncHandler(async (req: Request, res: Response, next: Nex
 });
 
 
-export {login, logout, validateLogin};
+/* @desc        Validate Login with Pin
+ * @route       POST /auth/update
+ * @access      Private
+*/
+const updateToken = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+
+    let { password } = req.body
+    if (!password){
+        return next(new ErrorResponse("Please provide apassword", 400));
+    }
+    
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return next(new ErrorResponse("No token provided", 403));
+    }
+
+    const token = authHeader.split("Bearer ")[1];
+
+    const decoded = jwt.decode(token) as JwtPayload;
+    const user = await User.findById(decoded?.sub);
+    if (!user) {
+        return next(new ErrorResponse("User not found", 404));
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+        return next(new ErrorResponse("Invalid Credentials", 401));   
+    }
+
+    user.refresh_token = user.generateRefreshToken();
+    await user.save();
+
+    let _user = user.toJSON();
+    delete _user.password;
+
+    return res.status(201).send(genMessage(200, _user));
+});
+
+
+export {login, logout, validateLogin, updateToken};

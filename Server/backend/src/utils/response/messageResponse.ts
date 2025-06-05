@@ -1,4 +1,4 @@
-export function genMessage (httpCode: number, message: any) {
+export function genMessage (httpCode: number, message: any, newToken?: any) {
     let msg: any = { httpCode };
 
     if(httpCode >= 400) {
@@ -11,6 +11,7 @@ export function genMessage (httpCode: number, message: any) {
     } else {
         msg.action = "Success";
         msg.results = message;
+        if(newToken){msg.newToken = newToken;}
     }
 
     return msg;

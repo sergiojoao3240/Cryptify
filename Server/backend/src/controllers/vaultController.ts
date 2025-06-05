@@ -37,7 +37,7 @@ const createVault = asyncHandler(async (req: RequestExt, res: Response, next: Ne
       return next(new ErrorResponse("Error creating vault", 422));
     }
 
-    return res.status(201).send(genMessage(201, vault));
+    return res.status(201).send(genMessage(201, vault, req.newToken));
 });
 
 
@@ -47,7 +47,7 @@ const createVault = asyncHandler(async (req: RequestExt, res: Response, next: Ne
  */
 const getAllByParameters = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     const data: any = await advancedSearch(req, Vault);
-    return res.status(200).json(genMessage(200, data));
+    return res.status(200).json(genMessage(200, data, req.newToken));
 });
 
 
@@ -71,7 +71,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
     }
   
     const vault = await Vault.findById(mongoId);
-    return res.status(200).json(genMessage(200, vault));
+    return res.status(200).json(genMessage(200, vault, req.newToken));
 });
 
 
@@ -81,7 +81,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
  */
 const deleteVaults = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     await Vault.deleteMany();
-    return res.status(204).json(genMessage(204, "All vaults deleted from DB."));}
+    return res.status(204).json(genMessage(204, "All vaults deleted from DB.", req.newToken));}
 );
 
 
@@ -100,7 +100,7 @@ const deleteVaultById = asyncHandler(async (req: RequestExt, res: Response, next
         return res.status(404).send(genMessage(404, "Vault not Found!"))
     }
 
-    return res.status(204).send(genMessage(204, `Vault ${isOwner._id} removed successfully.`));
+    return res.status(204).send(genMessage(204, `Vault ${isOwner._id} removed successfully.`, req.newToken));
 });
 
 
@@ -130,7 +130,7 @@ const updateVaultById = asyncHandler(async (req: RequestExt, res: Response, next
 
     await vault.save();
 
-    res.status(200).send(genMessage(200, vault));
+    res.status(200).send(genMessage(200, vault, req.newToken));
 });
 
 
@@ -151,7 +151,7 @@ const getAllMyVaults = asyncHandler(async (req: RequestExt, res: Response, next:
 
     const allVaults = [...myVaults, ...sharedVaultDetails];
 
-    return res.status(200).json(genMessage(200, allVaults));
+    return res.status(200).json(genMessage(200, allVaults, req.newToken));
 });
 
 

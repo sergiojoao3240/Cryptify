@@ -64,7 +64,7 @@ const createUser = asyncHandler(async (req: RequestExt, res: Response, next: Nex
  */
 const getAllByParameters = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     const data: any = await advancedSearch(req, User);
-    return res.status(200).json(genMessage(200, data));
+    return res.status(200).json(genMessage(200, data, req.newToken));
 });
 
 
@@ -80,7 +80,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
       return next(new ErrorResponse(`No user with id: ${mongoId}`, 404));
     }
 
-    return res.status(200).json(genMessage(200, data));
+    return res.status(200).json(genMessage(200, data, req.newToken));
 });
 
 
@@ -107,7 +107,7 @@ const deleteUserById = asyncHandler(async (req: RequestExt, res: Response, next:
     /* Remove user */
     await user.remove();
 
-    return res.status(204).send(genMessage(204, `User ${user._id} removed successfully.`));
+    return res.status(204).send(genMessage(204, `User ${user._id} removed successfully.`, req.newToken));
 });
 
 
@@ -130,7 +130,7 @@ const updateUserById = asyncHandler(async (req: RequestExt, res: Response, next:
       return next(new ErrorResponse(`Error when updating data`, 400));
     }
 
-    res.status(200).send(genMessage(200, user));
+    res.status(200).send(genMessage(200, user, req.newToken));
 });
 
 
@@ -282,7 +282,7 @@ const updatePassword = asyncHandler(async (req: RequestExt, res: Response, next:
 
   // Save the updated user
   await user.save();
-  return res.status(200).send(genMessage(200, user));
+  return res.status(200).send(genMessage(200, user, req.newToken));
 });
 
 
