@@ -1,0 +1,24 @@
+http:
+  routers:
+    frontend:
+      rule: "Host(`localhost`)"
+      entryPoints:
+        - http
+      middlewares:
+        - redirect
+      service: frontend
+
+    frontend-secure:
+      rule: "Host(`localhost`)"
+      entryPoints:
+        - https
+      tls:
+        certResolver: http
+      service: frontend
+  
+  services:
+    frontend:
+      loadBalancer:
+        servers:
+          - url: http://frontend
+

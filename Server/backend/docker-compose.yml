@@ -1,0 +1,23 @@
+
+services:
+
+  backend:
+    build: ./
+    container_name: backend
+    restart: unless-stopped
+    image: backend
+    env_file: ./server-config/prod-config.env
+    networks:
+      - traefik-proxy # connection with External DB
+      - api-internal-network # internal network for connection with redis
+    tty: true
+
+volumes:
+  uploads:
+    driver: local
+
+networks:
+  api-internal-network:
+    external: true
+  traefik-proxy:
+    external: true
