@@ -17,7 +17,8 @@ const vaultUserSchema = new mongoose.Schema<IVaultUser, IVaultUserModel>({
         required: [true, "Please provide an userId."],
     },
     vaultId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vault",
         required: [true, "Please provide a vaultId"],        
     },
     role: {

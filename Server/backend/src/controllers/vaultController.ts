@@ -52,7 +52,7 @@ const getAllByParameters = asyncHandler(async (req: RequestExt, res: Response, n
 
 
 /* @desc        Get vault by ID
- * @route       GET /vault/:id
+ * @route       GET /vaults/:id
  * @access      Private
  */
 const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
@@ -76,7 +76,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
 
 
 /* @desc        Delete all vaults
- * @route       DELETE /users
+ * @route       DELETE /vaults
  * @access      Private/admin
  */
 const deleteVaults = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
@@ -86,7 +86,7 @@ const deleteVaults = asyncHandler(async (req: RequestExt, res: Response, next: N
 
 
 /* @desc        Delete vault by ID
- * @route       GET /users/:id
+ * @route       GET /vaults/:id
  * @access      Private
  */
 const deleteVaultById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
@@ -105,7 +105,7 @@ const deleteVaultById = asyncHandler(async (req: RequestExt, res: Response, next
 
 
 /* @desc        Update Vault by ID
- * @route       PATCH /users/:id
+ * @route       PATCH /vaults/:id
  * @access      Private
  */
 const updateVaultById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
@@ -135,7 +135,7 @@ const updateVaultById = asyncHandler(async (req: RequestExt, res: Response, next
 
 
 /* @desc        Get all my Vaults 
- * @route       GET /vault/me
+ * @route       GET /vaults/me
  * @access      Private
  */
 const getAllMyVaults = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
