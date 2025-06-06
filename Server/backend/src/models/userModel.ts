@@ -76,7 +76,7 @@ userSchema.methods.refreshTokenValid = function (this: any) {
 
 
 userSchema.methods.comparePassword = async function (this: any, password: string) {
-  return await bcrypt.compare(password + process.env.PASSWORD_SECRET,this.password);
+  return await bcrypt.compare(password + process.env.PASSWORD_SECRET, this.password);
 };
 
 const User = mongoose.model<IUser, IUserModel>("User", userSchema);

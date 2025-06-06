@@ -63,11 +63,7 @@ const tokenValidation = asyncHandler(async (req: RequestExt, res: Response, next
                         return next();      
 
                     } else {
-                        return res.status(401).json({
-                            success: false,
-                            code: "TOKEN_EXPIRED",
-                            message: "Token expired. You can request a new one.",
-                        });
+                        return next(new ErrorResponse("Token expired. You can request a new one.", 401));
                     }
                 }
             }

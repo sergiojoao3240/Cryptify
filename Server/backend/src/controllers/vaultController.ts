@@ -1,6 +1,7 @@
 //_____________IMPORTS__________
 // Node Models
 import { Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
 // Models
 import Vault from "../models/vaultModel";
@@ -30,7 +31,7 @@ const createVault = asyncHandler(async (req: RequestExt, res: Response, next: Ne
 
     /* Create vault */
     const vault = await Vault.create({
-        ownerId: req.user._id,
+        ownerId: new mongoose.Types.ObjectId(req.user._id),
         name
     });
     if (!vault) {
