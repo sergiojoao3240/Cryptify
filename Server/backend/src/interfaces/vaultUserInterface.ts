@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+
 export interface IVaultUser {
-    userId: string,
-    vaultId: string,
+    userId: Types.ObjectId,
+    vaultId: Types.ObjectId,
     role: string
 }

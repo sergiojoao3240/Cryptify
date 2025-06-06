@@ -1,7 +1,7 @@
-import { ObjectId } from "mongoose"
+import { Types } from "mongoose"
 
 export interface ICategory {
-    id?: string
+    id?: Types.ObjectId
     name: string
-    vaultId: ObjectId
+    vaultId: Types.ObjectId
 }

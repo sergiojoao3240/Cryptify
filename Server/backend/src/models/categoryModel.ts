@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 
 // Interfaces
-import { ICategory } from '../interfaces/categoryinterface';
+import { ICategory } from '../interfaces/categoryInterface';
 
 //_____________IMPORTS__________________
 

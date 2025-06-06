@@ -1,6 +1,7 @@
 //_____________IMPORTS__________
 // Node Models
 import { Response, NextFunction } from "express";
+import mongoose from 'mongoose';
 
 // Models
 import User from "../models/userModel";
@@ -122,7 +123,7 @@ const updateUserById = asyncHandler(async (req: RequestExt, res: Response, next:
       return next(new ErrorResponse("Invalid update options provided.", 400, "InputError"));
     }
     /* Search for user and update the fields */
-    let user = await User.findOneAndUpdate({ _id: req.params.id }, req.body, {
+    let user = await User.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(req.params.id) }, req.body, {
       new: true,
       runValidators: true,
     });

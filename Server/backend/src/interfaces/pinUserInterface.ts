@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
+
 interface IPinUser {
-    idUser: string,
+    idUser: Types.ObjectId,
     pin: string,
     finishDate: Date,
     createDate?: Date,

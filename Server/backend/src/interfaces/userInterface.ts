@@ -1,10 +1,12 @@
+import { Types } from "mongoose"
+
 interface IUser {
     email: string,
     name: string,
     password?: string,
     refresh_token?: string,
     createdAt?: Date,
-    _id?: string
+    _id?: Types.ObjectId
 }
 
 interface IUserMethods {
