@@ -3,8 +3,8 @@ export function genMessage (httpCode: number, message: any, newToken?: any) {
 
     if(httpCode >= 400) {
         msg.action = "Failed";
-        if (message.response.data) {
-            msg.error = message.response.data.error;
+        if (message.response) {
+            msg.error = message.response;
         } else {
             msg.error = message.toString();
         }

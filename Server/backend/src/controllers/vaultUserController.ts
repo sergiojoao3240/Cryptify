@@ -7,7 +7,7 @@ import Vault from "../models/vaultModel";
 import VaultUser from "../models/vaultUserModel";
 import User from "../models/userModel";
 
-//Utils
+// Utils
 import asyncHandler from "../utils/async";
 import { genMessage } from "../utils/response/messageResponse";
 import ErrorResponse from "../utils/response/errorResponse";
@@ -74,7 +74,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
 
     let vault = vaultUser.vaultId;
 
-    const isOwner = vault.ownerId.toString() == userId?.toString();
+    const isOwner = (vault as any).ownerId.toString() == userId?.toString();
 
     const isInVault = await VaultUser.exists({ vaultId: vault, userId });
 

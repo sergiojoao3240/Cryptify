@@ -37,6 +37,7 @@ import UserRouter from "./routes/userRoute";
 import AuthRouter from "./routes/authRoute";
 import VaultRouter from "./routes/vaultRoute";
 import VaultUserRouter from "./routes/vaultUserRoute";
+import CategoryRoute from "./routes/categoryRoute";
 
 //_____________IMPORTS__________________
 
@@ -116,6 +117,7 @@ app.use("/users", UserRouter);
 app.use("/auth", AuthRouter);
 app.use("/vaults", VaultRouter);
 app.use("/vaultUser", VaultUserRouter);
+app.use("/category", CategoryRoute);
 
 
 /* Error handler middleware */

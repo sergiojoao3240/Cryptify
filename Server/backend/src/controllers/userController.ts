@@ -7,7 +7,7 @@ import User from "../models/userModel";
 import PinUser from "../models/pinUserModel";
 import Vault from "../models/vaultModel";
 
-//Utils
+// Utils
 import asyncHandler from "../utils/async";
 import { genMessage } from "../utils/response/messageResponse";
 import ErrorResponse from "../utils/response/errorResponse";

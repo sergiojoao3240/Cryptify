@@ -6,7 +6,7 @@ import { Response, NextFunction } from "express";
 import Vault from "../models/vaultModel";
 import VaultUser from "../models/vaultUserModel";
 
-//Utils
+// Utils
 import asyncHandler from "../utils/async";
 import { genMessage } from "../utils/response/messageResponse";
 import ErrorResponse from "../utils/response/errorResponse";
@@ -63,10 +63,9 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
     if (ownerVault) {
       return res.status(200).json(genMessage(200, ownerVault));
     }
-  
-    const hasAccess = await VaultUser.find({ vaultId: mongoId, userId });
-  
-    if (!hasAccess) {
+
+    const hasAccess = await VaultUser.exists({ vaultId: mongoId, userId });
+    if (hasAccess === false) {
       return next(new ErrorResponse(`Vault not found or access denied`, 404));
     }
   
@@ -97,7 +96,7 @@ const deleteVaultById = asyncHandler(async (req: RequestExt, res: Response, next
         await isOwner.remove();
         await VaultUser.deleteMany({vaultId: isOwner._id});
     } else {
-        return res.status(404).send(genMessage(404, "Vault not Found!"))
+        return res.status(404).send(genMessage(404, "Vault not Found or you don't have permission!"))
     }
 
     return res.status(204).send(genMessage(204, `Vault ${isOwner._id} removed successfully.`, req.newToken));
