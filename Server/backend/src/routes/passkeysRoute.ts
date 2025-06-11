@@ -10,11 +10,14 @@ import {
     deletePasskeys,
     deletePasskeyById,
     updatePasskeyById,
-    getAllPasskeysOfVaultID
+    getAllPasskeysOfVaultID,
+    exportAllPasskeysOfVaultID,
+    importPasskeysToVaultID
 } from "../controllers/passKeysController";
 
 // Middlewares
 import { tokenValidation } from "../middleware/tokenValidation";
+import { uploadFile } from "../middleware/processFile";
 
 //________________IMPORTS______________
 
@@ -27,6 +30,9 @@ router
   .get(tokenValidation, getAllByParameters);
 
 router.route("/vault/:id").get(tokenValidation, getAllPasskeysOfVaultID);
+
+router.route("/export/vault/:id").get(tokenValidation, exportAllPasskeysOfVaultID);
+router.route("/import/vault/:id").post(tokenValidation, uploadFile, importPasskeysToVaultID);
 
 router
   .route("/:id")

@@ -5,13 +5,14 @@ VaultPass is a secure and user-friendly password manager that allows individuals
 ## 🧩 Features
 
 - Store passwords with name, username/email, password, and category
-- Create personal and shared vaults with role-based permissions (`admin`, `viewer`, etc.)
+- Create personal and shared vaults with role-based permissions (`read`, `readWrite`)
 - Generate random passwords based on custom criteria (A-Z, a-z, 0-9, symbols)
 - Login with a temporary PIN sent via email
+- Organize passwords by category
 - Import and export passwords to/from files
+
 - Check if a password has been compromised (via HaveIBeenPwned) (?) -> https://haveibeenpwned.com/Passwords
 - Alert users when passwords are reused across services (?)
-- Organize passwords by category
 - Share passwords via time-limited public links (?)
 - (Planned) Chrome extension for autofill and vault access
 

@@ -164,7 +164,7 @@ const updateCategoryById = asyncHandler(async (req: RequestExt, res: Response, n
  */
 const getAllCategoriesOfVaultiD = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     
-    const userId = req.user!._id;
+    const userId = req.user._id!;
 
     const vault = await Vault.findById(req.params.id);
     if (!vault) {
@@ -175,7 +175,7 @@ const getAllCategoriesOfVaultiD = asyncHandler(async (req: RequestExt, res: Resp
 
     const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });
 
-    if (userId.toString() != vault.ownerId.toString() && isInVault === false) {
+    if (userId!.toString() != vault.ownerId.toString() && isInVault === false) {
         return next(new ErrorResponse("Access Denied!.", 403));
     }
 

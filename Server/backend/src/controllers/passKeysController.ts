@@ -285,6 +285,103 @@ const getAllPasskeysOfVaultID = asyncHandler(async (req: RequestExt, res: Respon
 });
 
 
+/* @desc        Export passkeys's Vaults 
+ * @route       GET /passkeys/export/vault/:id
+ * @access      Private
+ */
+const exportAllPasskeysOfVaultID = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+    
+    const userId = req.user._id!;
+
+    const vault = await Vault.findById(req.params.id);
+    if (!vault) {
+        return next(new ErrorResponse("Vault not found.", 403));
+    }
+  
+    const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });
+
+    if (userId.toString() != vault.ownerId.toString() && isInVault === false) {
+        return next(new ErrorResponse("Access Denied!.", 403));
+    }
+
+    const allPasskeys = await PassKeys.find({ vaultId: vault._id });
+
+    const decryptedPasskeys = allPasskeys.map(pk => {
+            const key = crypto.createHash('sha256').update(pk.key!).digest('base64').substr(0, 32);
+            const iv = Buffer.from(pk.iv!, 'hex');
+            const decipher = crypto.createDecipheriv(process.env.ALGORITHM!, key, iv);
+            let decrypted = decipher.update(pk.password, 'hex', 'utf-8');
+            decrypted += decipher.final('utf-8');
+
+            return {
+                name: pk.name,
+                username: pk.username,
+                password: decrypted,
+                categoryId: pk.categoryId || null
+            };
+    });
+
+    return res.status(200)
+    .setHeader("Content-Disposition", `attachment; filename=passkeys-${vault._id}.json`)
+    .json(decryptedPasskeys);
+});
+
+
+/* @desc        Import passkeys's Vaults 
+ * @route       Post /passkeys/import/vault/:id
+ * @access      Private
+ */
+const importPasskeysToVaultID = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+    
+    const userId = req.user._id!;
+
+    const vault = await Vault.findById(req.params.id);
+    if (!vault) {
+        return next(new ErrorResponse("Vault not found.", 403));
+    }
+  
+    const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });
+
+    if (userId.toString() != vault.ownerId.toString() && isInVault === false) {
+        return next(new ErrorResponse("Access Denied!.", 403));
+    }
+
+    if (!req.file) return next(new ErrorResponse("No file uploaded", 400));
+
+    let imported;
+    try {
+        imported = JSON.parse(req.file.buffer.toString('utf-8'));
+    } catch {
+        return next(new ErrorResponse("Invalid JSON format", 422));
+    }
+
+    const keyRaw = `${req.user._id}-${req.params.id}`;
+    const key = crypto.createHash('sha256').update(keyRaw).digest('base64').substr(0, 32);
+
+    const prepared = imported.map((item: any) => {
+        const iv = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv(process.env.ALGORITHM!, key, iv);
+        let encrypted = cipher.update(item.password, 'utf-8', 'hex');
+        encrypted += cipher.final('hex');
+
+        return {
+            name: item.name,
+            username: item.username,
+            password: encrypted,
+            vaultId: req.params.id,
+            key: keyRaw,
+            iv: iv.toString('hex'),
+            lastUpdateUserId: req.user._id,
+        };
+    });
+
+    await PassKeys.insertMany(prepared);
+
+    return res.status(201).send(genMessage(201, `${prepared.length} passkeys imported`, req.newToken));
+
+});
+
+
 export {
   createPassKey,
   getAllByParameters,
@@ -292,5 +389,7 @@ export {
   deletePasskeys,
   deletePasskeyById,
   updatePasskeyById,
-  getAllPasskeysOfVaultID
+  getAllPasskeysOfVaultID,
+  exportAllPasskeysOfVaultID,
+  importPasskeysToVaultID
 };
