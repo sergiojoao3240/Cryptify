@@ -3,11 +3,11 @@
 import mongoose from 'mongoose';
 
 // Interfaces
-import { IPassKeys, IPasskeysMethods } from '../interfaces/passKeysInterface';
+import { IPassKeys } from '../interfaces/passKeysInterface';
 
 //_____________IMPORTS__________________
 
-interface IPassKeysModel extends mongoose.Model<IPassKeys, {}, IPasskeysMethods>{};
+interface IPassKeysModel extends mongoose.Model<IPassKeys, {}>{};
 
 
 const passKeysSchema = new mongoose.Schema<IPassKeys, IPassKeysModel>({

@@ -11,7 +11,3 @@ export interface IPassKeys {
     lastUpdateUserId: Types.ObjectId
     categoryId: Types.ObjectId
 }
-
-export interface IPasskeysMethods {
-    comparePassword(password: string): boolean
-}

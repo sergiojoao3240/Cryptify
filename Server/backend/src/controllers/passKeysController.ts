@@ -2,10 +2,10 @@
 // Node Models
 import { Response, NextFunction } from "express";
 import * as crypto from 'crypto';
+import axios from "axios";
 
 // Models
 import Category from "../models/categoryModel";
-import User from "../models/userModel";
 import Vault from "../models/vaultModel";
 import VaultUser from "../models/vaultUserModel";
 import PassKeys from "../models/passKeysModel";
@@ -68,6 +68,11 @@ const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: 
         } catch (err: any) {
             return next(new ErrorResponse(err.message, 400));
         }       
+    }
+
+    let checkPasswordExpose = await checkPasswordPwned(password);
+    if (checkPasswordExpose > 0) {
+        return next(new ErrorResponse(`This password has been seen ${checkPasswordExpose} times before in data breaches! Please try another one!.`, 400));
     }
 
     const keyRaw = `${req.user._id}-${vaultId}`;
@@ -237,6 +242,11 @@ const updatePasskeyById = asyncHandler(async (req: RequestExt, res: Response, ne
         }
     }
 
+    let checkPasswordExpose = await checkPasswordPwned(password);
+    if (checkPasswordExpose > 0) {
+        return next(new ErrorResponse(`This password has been seen ${checkPasswordExpose} times before in data breaches! Please try another one!.`, 400));
+    }
+
     if (password) {
         const keyRaw = passkey.key;
         const key = crypto.createHash('sha256').update(keyRaw!).digest('base64').substr(0, 32);
@@ -382,6 +392,32 @@ const importPasskeysToVaultID = asyncHandler(async (req: RequestExt, res: Respon
 });
 
 
+/**
+ * Verifica se a password foi comprometida com base no serviço Pwned Passwords.
+ * @param password - A password a verificar.
+ * @returns Número de vezes que a password apareceu em vazamentos (0 = não encontrada).
+ */
+export async function checkPasswordPwned(password: string): Promise<number> {
+    const sha1 = crypto.createHash('sha1').update(password).digest('hex').toUpperCase();
+    const prefix = sha1.slice(0, 5);
+    const suffix = sha1.slice(5);
+
+    const response = await axios.get(`https://api.pwnedpasswords.com/range/${prefix}`);
+
+    const lines = response.data.split('\n');
+
+    for (const line of lines) {
+        const [hashSuffix, count] = line.split(':');
+        if (hashSuffix === suffix) {
+            return parseInt(count, 10); // foi encontrada!
+        }
+    }
+
+    return 0
+}
+
+
+
 export {
   createPassKey,
   getAllByParameters,
@@ -393,3 +429,6 @@ export {
   exportAllPasskeysOfVaultID,
   importPasskeysToVaultID
 };
+
+
+
