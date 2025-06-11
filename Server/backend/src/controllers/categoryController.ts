@@ -108,7 +108,7 @@ const deleteCategoryById = asyncHandler(async (req: RequestExt, res: Response, n
         return next(new ErrorResponse(`Vault not found!`, 404));
     }
 
-    if (req.user._id == vaultPermission.ownerId) {
+    if (req.user._id?.toString() == vaultPermission.ownerId.toString()) {
         /* Remove category */
         await category.remove();
     } else {
@@ -175,7 +175,7 @@ const getAllCategoriesOfVaultiD = asyncHandler(async (req: RequestExt, res: Resp
 
     const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });
 
-    if (userId != vault.ownerId && isInVault === false) {
+    if (userId.toString() != vault.ownerId.toString() && isInVault === false) {
         return next(new ErrorResponse("Access Denied!.", 403));
     }
 

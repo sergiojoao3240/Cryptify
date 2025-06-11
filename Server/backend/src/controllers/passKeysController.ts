@@ -1,6 +1,7 @@
 //_____________IMPORTS__________
 // Node Models
 import { Response, NextFunction } from "express";
+import * as crypto from 'crypto';
 
 // Models
 import Category from "../models/categoryModel";
@@ -15,6 +16,7 @@ import { genMessage } from "../utils/response/messageResponse";
 import ErrorResponse from "../utils/response/errorResponse";
 import { advancedSearch } from "../utils/advancedSearch";
 import { isUpdateValid } from "../utils/updateValidation";
+import { generatePasswordFromQuery } from "../utils/generatepassword";
 
 // Interfaces
 import { RequestExt } from "../interfaces/requestInterface";
@@ -26,14 +28,28 @@ import { RequestExt } from "../interfaces/requestInterface";
  * @access      Private
  */
 const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
-    const { name, vaultId, username, password, categoryId } = req.body;
-    if (!name || !vaultId || !username || !password) {
+    const { name, vaultId, username, password: inputPassword, categoryId } = req.body;
+    let password = inputPassword;
+
+    if (!name || !vaultId || !username /*|| !password*/) {
       return next(new ErrorResponse("Missing required field in the request", 400, "InputError"));
     }
 
     const existVault = await Vault.findById(vaultId);
     if (!existVault){
         return next(new ErrorResponse("Vault not found", 404));
+    }
+
+    const isOwner = existVault.ownerId.toString() === req.user._id!.toString();
+
+    const hasPermission = await VaultUser.findOne({
+        vaultId: vaultId,
+        userId: req.user._id,
+        role: "readWrite"
+    });
+
+    if (!isOwner && !hasPermission) {
+        return next(new ErrorResponse("Permission Denied", 403));
     }
 
     if (categoryId) {
@@ -43,12 +59,35 @@ const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: 
         }
     }
 
+    if(req.query && !password) {
+        try {
+            password = generatePasswordFromQuery(req.query);
+            if (!password) {
+                return next(new ErrorResponse("Password failed to generate.", 400));
+            }
+        } catch (err: any) {
+            return next(new ErrorResponse(err.message, 400));
+        }       
+    }
+
+    const keyRaw = `${req.user._id}-${vaultId}`;
+    const key = crypto.createHash('sha256').update(keyRaw).digest('base64').substr(0, 32);
+    const iv = crypto.randomBytes(16);
+    let encrypted: string;
+
+    // Encrypt Password
+    const cipher = crypto.createCipheriv(process.env.ALGORITHM!, key, iv);
+    encrypted = cipher.update(password, 'utf-8', 'hex');
+    encrypted += cipher.final('hex');
+
     /* Create passkey */
     const passkey = await PassKeys.create({
         name,
         username,
-        password,
+        password: encrypted,
         vaultId,
+        key: keyRaw,
+        iv: iv.toString('hex'),
         lastUpdateUserId: req.user._id,
         ...(categoryId && { categoryId })
     });
@@ -70,142 +109,188 @@ const getAllByParameters = asyncHandler(async (req: RequestExt, res: Response, n
 });
 
 
-/* @desc        Get category by ID
- * @route       GET /category/:id
+/* @desc        Get passkey by ID
+ * @route       GET /passkeys/:id
  * @access      Private
  */
 const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
-    const mongoId = req.params.id;
+    const passkeyID = req.params.id;
     const userId = req.user!._id;
   
-    const category = await Category.findById(mongoId);
-    if (!category) {
-        return next(new ErrorResponse(`Category not found or access denied!`, 404));
+    const passkey = await PassKeys.findById(passkeyID);
+    if (!passkey) {
+        return next(new ErrorResponse(`Passkey not found or access denied!`, 404));
     }
   
-    let vault = await Vault.findById(category.vaultId);
+    let vault = await Vault.findById(passkey.vaultId);
     if (!vault) {
       return next(new ErrorResponse(`Vault not found`, 404));
     }
 
     const isInVault = await VaultUser.exists({ vaultId: vault._id, userId: userId });
 
-    if (vault.ownerId.toString() !== userId!.toString() && isInVault === false){
-        return next(new ErrorResponse(`Category not found or access denied`, 404));
+    if (vault.ownerId.toString() === userId!.toString() || isInVault === true){
+        const keyRaw = passkey.key;
+        const key = crypto.createHash('sha256').update(keyRaw!).digest('base64').substr(0, 32);
+        const iv = Buffer.from(passkey.iv!, 'hex');
+
+        const decipher = crypto.createDecipheriv(process.env.ALGORITHM!, key, iv);
+        let decrypted = decipher.update(passkey.password, 'hex', 'utf-8');
+        decrypted += decipher.final('utf-8');
+        passkey.password = decrypted;
     }
+
+    let finalPassKey = passkey.toJSON();
+    delete finalPassKey.iv;
+    delete finalPassKey.key;
   
-    return res.status(200).json(genMessage(200, category, req.newToken));
+    return res.status(200).json(genMessage(200, finalPassKey, req.newToken));
 });
 
 
-/* @desc        Delete all categories
- * @route       DELETE /category
+/* @desc        Delete all passkeys
+ * @route       DELETE /passkeys
  * @access      Private/admin
  */
-const deleteCategories = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
-    await Category.deleteMany();
-    return res.status(204).json(genMessage(204, "All categories deleted from DB.", req.newToken));}
+const deletePasskeys = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+    await PassKeys.deleteMany();
+    return res.status(204).json(genMessage(204, "All passkeys deleted from DB.", req.newToken));}
 );
 
 
-/* @desc        Delete category by ID
- * @route       GET /category/:id
+/* @desc        Delete passkey by ID
+ * @route       GET /passekeys/:id
  * @access      Private
  */
-const deleteCategoryById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+const deletePasskeyById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     
-    const category = await Category.findOne({_id: req.params.id});
-    if (!category) {
+    const passkey = await PassKeys.findOne({_id: req.params.id});
+    if (!passkey) {
         return next(new ErrorResponse(`Category not found!`, 404));
     }
     
-    let vaultPermission = await Vault.findById(category.vaultId);
-    if (!vaultPermission) {
-        return next(new ErrorResponse(`Vault not found!`, 404));
+    let vaultPermission = await VaultUser.findOne({ vaultId:passkey.vaultId, userId: req.user._id, role: "readWrite" });
+
+    let vault = await Vault.findById(passkey.vaultId);
+    if (!vault) {
+        return next(new ErrorResponse(`Vault not Found!`, 404));
     }
 
-    if (req.user._id == vaultPermission.ownerId) {
-        /* Remove category */
-        await category.remove();
+    if (vaultPermission || vault.ownerId.toString() == req.user._id?.toString()) {  
+        /* Remove passkey */
+        await passkey.remove();    
     } else {
-        return res.status(404).send(genMessage(404, "Access Denied!!"))
+        return res.status(404).send(genMessage(403, "Access Denied!!"))
     }
 
-    return res.status(204).send(genMessage(204, `Category ${category._id} removed successfully.`, req.newToken));
+    return res.status(204).send(genMessage(204, `Passkey ${passkey._id} removed successfully.`, req.newToken));
 });
 
 
-/* @desc        Update Category by ID
- * @route       PATCH /category/:id
+/* @desc        Update Passkey by ID
+ * @route       PATCH /passkeys/:id
  * @access      Private
  */
-const updateCategoryById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+const updatePasskeyById = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     /* Checks if the values to be updated by client are the ones expected by server */
-    const allowedUpdates = ["name"];
+    const allowedUpdates = ["name", "password", "categoryId", "username"];
     if (!isUpdateValid(req.body, allowedUpdates)) {
       return next(new ErrorResponse("Invalid update options provided.", 400, "InputError"));
     }
 
-    const categoryId = req.params.id;
+    const passkeyId = req.params.id;
 
-    const category = await Category.findById(categoryId);
-    if (!category) {
-        return next(new ErrorResponse("Category not found.", 403));
+    const passkey = await PassKeys.findById(passkeyId);
+    if (!passkey) {
+        return next(new ErrorResponse("Passkey not found.", 403));
     }
 
-    let vaultPermission = await Vault.findById(category.vaultId);
-    if (!vaultPermission) {
-        return next(new ErrorResponse(`Vault not found!`, 404));
+    const vault = await Vault.findById(passkey.vaultId);
+    if (!vault) {
+        return next(new ErrorResponse("Vault not Found!", 404));
     }
 
-    if (req.user._id == vaultPermission.ownerId) {
-        /* Remove category */
-        Object.keys(req.body).forEach((key) => {
-            (category as any)[key] = req.body[key];
-        });
-    
-        await category.save();
+    const isOwner = vault.ownerId.toString() === req.user._id!.toString();
+    const hasPermission = await VaultUser.findOne({
+        vaultId: passkey.vaultId,
+        userId: req.user._id,
+        role: "readWrite"
+    });
 
-    } else {
-        return res.status(404).send(genMessage(404, "Access Denied!!"))
+    if (!isOwner && !hasPermission) {
+        return next(new ErrorResponse("Access Denied!", 403));
     }
 
-    res.status(200).send(genMessage(200, category, req.newToken));
+    if (req.body.categoryId) {
+        const category = await Category.findOne({ _id: req.body.categoryId, vaultId: passkey.vaultId});
+        if (!category) {
+            return next(new ErrorResponse("Invalid category.", 400));
+        }
+    }
+
+    let password = req.body.password;
+    if (password === undefined && req.query && req.body.password !== "") {
+        try {
+            password = generatePasswordFromQuery(req.query);
+        } catch (err: any) {
+            return next(new ErrorResponse(err.message, 400));
+        }
+    }
+
+    if (password) {
+        const keyRaw = passkey.key;
+        const key = crypto.createHash('sha256').update(keyRaw!).digest('base64').substr(0, 32);
+        const iv = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv(process.env.ALGORITHM!, key, iv);
+        let encrypted = cipher.update(password, 'utf-8', 'hex');
+        encrypted += cipher.final('hex');
+
+        passkey.password = encrypted;
+        passkey.iv = iv.toString('hex');
+    }
+
+    if (req.body.name) passkey.name = req.body.name;
+    if (req.body.username) passkey.username = req.body.username;
+    if (req.body.categoryId) passkey.categoryId = req.body.categoryId;
+    passkey.lastUpdateUserId = req.user._id!;
+
+    await passkey.save();
+
+    res.status(200).send(genMessage(200, passkey, req.newToken));
 });
 
 
-/* @desc        Get all my Vaults 
- * @route       GET /category/vault/:id
+/* @desc        Get all my passkeys's Vaults 
+ * @route       GET /passkeys/vault/:id
  * @access      Private
  */
-const getAllCategoriesOfVaultiD = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+const getAllPasskeysOfVaultID = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
     
-    const userId = req.user!._id;
+    const userId = req.user._id!;
 
     const vault = await Vault.findById(req.params.id);
     if (!vault) {
         return next(new ErrorResponse("Vault not found.", 403));
     }
   
-    const allCategories = await Category.find({ vaultId: vault._id });
+    const allPasskeys = await PassKeys.find({ vaultId: vault._id });
 
     const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });
 
-    if (userId != vault.ownerId && isInVault === false) {
+    if (userId.toString() != vault.ownerId.toString() && isInVault === false) {
         return next(new ErrorResponse("Access Denied!.", 403));
     }
 
-    return res.status(200).json(genMessage(200, allCategories, req.newToken));
+    return res.status(200).json(genMessage(200, allPasskeys, req.newToken));
 });
 
 
 export {
   createPassKey,
   getAllByParameters,
-  
   getById,
-  deleteCategories,
-  deleteCategoryById,
-  updateCategoryById,
-  getAllCategoriesOfVaultiD
+  deletePasskeys,
+  deletePasskeyById,
+  updatePasskeyById,
+  getAllPasskeysOfVaultID
 };

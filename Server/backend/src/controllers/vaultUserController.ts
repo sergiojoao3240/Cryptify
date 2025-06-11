@@ -29,6 +29,11 @@ const createVaultUser = asyncHandler(async (req: RequestExt, res: Response, next
       return next(new ErrorResponse("Missing required field in the request", 400, "InputError"));
     }
 
+    let existRole = await VaultUser.exists({ userId, vaultId});
+    if (existRole) {
+        return next(new ErrorResponse(`The user already has a role!`, 404));
+    }
+
     let existVault = await Vault.findById(vaultId);
     if (!existVault) {
         return next(new ErrorResponse(`Vault not found`, 404));
@@ -116,7 +121,7 @@ const deleteVaultUserById = asyncHandler(async (req: RequestExt, res: Response, 
         return res.status(404).send(genMessage(404, "Vault not Found!"))  
     } 
 
-    if (vault.ownerId == authenticated || authenticated == vaultUser.userId){
+    if (vault.ownerId.toString() == authenticated?.toString() || authenticated?.toString() == vaultUser.userId.toString()){
         await vaultUser.remove();
     } else {
         return res.status(403).send(genMessage(403, "Access Denied!"))  

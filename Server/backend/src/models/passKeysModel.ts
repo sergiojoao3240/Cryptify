@@ -1,7 +1,6 @@
 //_____________IMPORTS__________________
 // Node Modules
 import mongoose from 'mongoose';
-import bcrypt from "bcryptjs";
 
 // Interfaces
 import { IPassKeys, IPasskeysMethods } from '../interfaces/passKeysInterface';
@@ -34,6 +33,13 @@ const passKeysSchema = new mongoose.Schema<IPassKeys, IPassKeysModel>({
         "Password cannot contain the word 'password'",
         ],   
     },
+    key: {
+        type: String,
+        //required: [true, "Please provide a key"],        
+    },
+    iv: {
+        type: String,
+    },
     lastUpdateUserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
@@ -44,17 +50,6 @@ const passKeysSchema = new mongoose.Schema<IPassKeys, IPassKeysModel>({
         //required: [true, "Please provide a categoryId"],        
     }
 });
-
-passKeysSchema.pre("save", async function (this: any, next: any) {
-      if (this.isModified("password")) {
-        this.password = await bcrypt.hash(this.password + process.env.PASSWORD_SECRET,10);
-      }
-      next();
-});
-
-passKeysSchema.methods.comparePassword = async function (this: any, password: string) {
-  return await bcrypt.compare(password + process.env.PASSWORD_SECRET, this.password);
-};
 
 
 const PassKeys = mongoose.model<IPassKeys, IPassKeysModel>("PassKeys", passKeysSchema);

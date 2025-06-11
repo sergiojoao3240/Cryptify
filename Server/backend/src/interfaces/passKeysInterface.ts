@@ -4,6 +4,8 @@ export interface IPassKeys {
     id?: Types.ObjectId
     vaultId: Types.ObjectId
     name: string,
+    key?: string,
+    iv?: string,
     username: string,
     password: string,
     lastUpdateUserId: Types.ObjectId
