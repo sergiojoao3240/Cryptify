@@ -79,6 +79,19 @@ const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: 
     const key = crypto.createHash('sha256').update(keyRaw).digest('base64').substr(0, 32);
     const iv = crypto.randomBytes(16);
     let encrypted: string;
+    let forceCreate = req.query.force === "true";
+
+    // Check if password is in use in other passkey in the same vault 
+    if (!forceCreate) {
+        const existing = await PassKeys.findOne({ vaultId, hash: key });
+        if (existing) {
+            return res.status(200).json({
+                warning: "Password already used in this vault.",
+                message: "Do you want to continue anyway? Use '?force=true' to skip this warning.",
+                existingPasskeyId: existing._id
+            });
+        }
+    }
 
     // Encrypt Password
     const cipher = crypto.createCipheriv(process.env.ALGORITHM!, key, iv);
@@ -91,6 +104,7 @@ const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: 
         username,
         password: encrypted,
         vaultId,
+        hash: key,
         key: keyRaw,
         iv: iv.toString('hex'),
         lastUpdateUserId: req.user._id,
@@ -148,6 +162,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
     let finalPassKey = passkey.toJSON();
     delete finalPassKey.iv;
     delete finalPassKey.key;
+    delete finalPassKey.hash;
   
     return res.status(200).json(genMessage(200, finalPassKey, req.newToken));
 });

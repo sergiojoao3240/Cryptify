@@ -37,6 +37,9 @@ const passKeysSchema = new mongoose.Schema<IPassKeys, IPassKeysModel>({
         type: String,
         //required: [true, "Please provide a key"],        
     },
+    hash: {
+        type: String,
+    },
     iv: {
         type: String,
     },

@@ -11,9 +11,9 @@ VaultPass is a secure and user-friendly password manager that allows individuals
 - Organize passwords by category
 - Import and export passwords to/from files
 - Check if a password has been compromised (via HaveIBeenPwned)
+- Alert users when passwords are reused across services
 
 ## Planned Features
-- Alert users when passwords are reused across services
 - Share passwords via time-limited public links
 - (Planned) Chrome extension for autofill and vault access
 
