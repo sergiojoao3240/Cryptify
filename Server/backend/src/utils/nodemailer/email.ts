@@ -8,6 +8,7 @@ import ErrorResponse from "../response/errorResponse";
 // Email models
 import { ConfirmPassswordUpdated } from "./email_models/confirmPasswordUpdated";
 import { NewPinMessage } from "./email_models/authPin";
+import { SharedPasskey } from "./email_models/sharedPasskey";
 
 //___________________IMPORTS______________________
 
@@ -32,7 +33,8 @@ export async function Email(email: string, subjectB: string, typeMessage: string
     // Caso contrário retorna-se um erro
     const messageGenerators: { [key: string]: () => string } = {
         AuthPin: () => NewPinMessage(info),
-        ConfirmPassswordUpdated: () => ConfirmPassswordUpdated()
+        ConfirmPassswordUpdated: () => ConfirmPassswordUpdated(),
+        SharedPasskey: () => SharedPasskey(info)
     };
     
     const generateHtml = messageGenerators[typeMessage];

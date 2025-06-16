@@ -9,6 +9,7 @@ import Category from "../models/categoryModel";
 import Vault from "../models/vaultModel";
 import VaultUser from "../models/vaultUserModel";
 import PassKeys from "../models/passKeysModel";
+import SharedPasskey from "../models/sharedPasskeyModel";
 
 // Utils
 import asyncHandler from "../utils/async";
@@ -17,6 +18,7 @@ import ErrorResponse from "../utils/response/errorResponse";
 import { advancedSearch } from "../utils/advancedSearch";
 import { isUpdateValid } from "../utils/updateValidation";
 import { generatePasswordFromQuery } from "../utils/generatepassword";
+import { Email } from "../utils/nodemailer/email";
 
 // Interfaces
 import { RequestExt } from "../interfaces/requestInterface";
@@ -432,6 +434,75 @@ export async function checkPasswordPwned(password: string): Promise<number> {
 }
 
 
+/* @desc        Create sharedpasskey 
+ * @route       POST /passkey/shared
+ * @access      Private
+ */
+const createSharedPassKey = asyncHandler(async (req: RequestExt, res: Response, next: NextFunction) => {
+    const { idPasskey, emailDest } = req.body;
+    
+    if (!idPasskey || !emailDest) {
+      return next(new ErrorResponse("Missing required field in the request", 400, "InputError"));
+    }
+
+    const existPasskey = await PassKeys.findById(idPasskey);
+    if (!existPasskey){
+        return next(new ErrorResponse("Passkey not found", 404));
+    }
+
+    const existVault = await Vault.findById(existPasskey.vaultId);
+    if (!existVault){
+        return next(new ErrorResponse("Vault not found", 404));
+    }
+
+    const isOwner = existVault.ownerId.toString() === req.user._id!.toString();
+
+    const hasPermission = await VaultUser.findOne({
+        vaultId: existPasskey.vaultId,
+        userId: req.user._id,
+        role: "readWrite"
+    });
+
+    if (!isOwner && !hasPermission) {
+        return next(new ErrorResponse("Permission Denied", 403));
+    }
+
+    
+    /* Create sharedPasskey */
+    const sharedPasskey = await SharedPasskey.create({
+        passkey: existPasskey.password,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        viewsRemaining: 1,
+        createdBy: req.user._id
+    });
+    if (!sharedPasskey) {
+        return next(new ErrorResponse("Error creating sharedPasskey", 422));
+    }
+
+    let link = `https://api.cryptify.ss-centi.com/passkeys/shared/${sharedPasskey._id.toString()}`;
+
+    Email(emailDest, "Share Password", "SharedPasskey", "", link)
+
+    return res.status(201).send(genMessage(201, sharedPasskey, req.newToken));
+});
+
+
+
+// função para abrir o link e desencriptar a password -> por terminar
+export const getShareData = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const share = await ShareLink.findById(id);
+  
+    if (!share || share.expiresAt < new Date() || share.viewsRemaining < 1) {
+      return res.status(410).json({ message: 'Este link expirou ou já foi utilizado.' });
+    }
+  
+    share.viewsRemaining -= 1;
+    await share.save();
+  
+    res.json({ data: share.data }); // A decriptação acontece no frontend com a key do fragmento
+  });
+  
 
 export {
   createPassKey,
