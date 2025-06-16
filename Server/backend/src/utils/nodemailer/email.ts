@@ -6,10 +6,8 @@ const nodeMailer = require('nodemailer');
 import ErrorResponse from "../response/errorResponse";
 
 // Email models
-import { AlertMessage } from "./email_models/alert";
 import { ConfirmPassswordUpdated } from "./email_models/confirmPasswordUpdated";
 import { NewPinMessage } from "./email_models/authPin";
-import { NewWorkspaceMessage } from "./email_models/newWorkspace";
 
 //___________________IMPORTS______________________
 
@@ -33,7 +31,6 @@ export async function Email(email: string, subjectB: string, typeMessage: string
     // Criação de um objeto que pode mapear os tipos e mensagens aos respetivos modelos
     // Caso contrário retorna-se um erro
     const messageGenerators: { [key: string]: () => string } = {
-        Alert: () => AlertMessage(email), // alert model
         AuthPin: () => NewPinMessage(info),
         ConfirmPassswordUpdated: () => ConfirmPassswordUpdated()
     };
