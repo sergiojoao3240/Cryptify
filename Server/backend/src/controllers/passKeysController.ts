@@ -280,7 +280,7 @@ const getAllPasskeysOfVaultID = asyncHandler(async (req: RequestExt, res: Respon
 
     const vault = await Vault.findById(req.params.id);
     if (!vault) {
-        return next(new ErrorResponse("Vault not found.", 403));
+        return next(new ErrorResponse("Vault not found.", 404));
     }
   
     const allPasskeys = await PassKeys.find({ vaultId: vault._id });
@@ -347,7 +347,7 @@ const importPasskeysToVaultID = asyncHandler(async (req: RequestExt, res: Respon
 
     const vault = await Vault.findById(req.params.id);
     if (!vault) {
-        return next(new ErrorResponse("Vault not found.", 403));
+        return next(new ErrorResponse("Vault not found.", 404));
     }
   
     const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });

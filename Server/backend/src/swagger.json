@@ -1,0 +1,3637 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cryptify",
+    "description": "This page contains the documentation for the entire project API. It explains all the existing routes, how they are used and the various possible responses. With the right credentials you can test the routes.",
+    "contact": {
+      "name": "Sergio Gonçalves",
+      "email": "sergiojoao3240@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:85",
+      "description": "DevServer"
+    },
+    {
+      "url": "https://api.cryptify.ss-centi.com",
+      "description": "Server on AWS"
+    },
+    {
+      "url": "http://localhost",
+      "description": "Server on Docker"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "isOnline": {
+             "type": "boolean",
+             "example": true
+           },
+           "_id": {
+             "type": "string",
+             "example": "66fd6e1af196280b6cd9627e"
+           },
+           "email": {
+             "type": "string",
+             "example": "user@example.com"
+           },
+           "name": {
+             "type": "string",
+             "example": "name of user"
+           },
+           "password": {
+             "type": "string",
+             "example": "$2a$10$EDqgf/HJjZKqc8H/E3hte1w/TFDcv1CmBPbQsRKPgE0G1GHnHzMO"
+           },
+           "createdAt": {
+             "type": "string",
+             "format": "date-time",
+             "example": "2024-11-21T13:59:42.944Z"
+           },
+           "__v": {
+             "type": "integer",
+             "example": 0
+           }
+        }
+      },
+
+      "Vault": {
+        "type": "object",
+        "properties":{
+          "_id": {
+            "type": "string",
+            "example": "66fd6e1af196280b6cd9627e"
+          },
+          "name": {
+            "type": "string",
+            "example": "room01"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          },
+          "ownerId": {
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          }
+        }
+      },
+
+      "VaultUser": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66fd6e1af196280b6cd9627e"
+          },
+          "vaultId": {
+            "type": "string",
+            "example": "634fd6e1afa961a0b6cd980e1"
+          },
+          "userId": {
+            "type": "string",
+            "example": "434fd6e1afa961a0b6cd980e1"
+          },
+          "role": {
+            "type": "string",
+            "example": "readWrite"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+
+      "Categories": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66fd6e1af196280b6cd9627e"
+          },
+          "name": {
+            "type": "string",
+            "example": "Social"
+          },
+          "vaultId": {
+            "type": "string",
+            "example": "21fd6e1af196280b6cd9086e"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+
+      "Passkeys": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "66fd6e1af196280b6cd9627e"
+          },
+          "name": {
+            "type": "string",
+            "example": "password"
+          },
+          "username": {
+            "type": "string",
+            "example": "user123"
+          },
+          "password": {
+            "type": "string",
+            "example": "e99195c72daf11fe6e71e657720b7e46f6d77265429632047d43c8721e2204f5"
+          },
+          "vaultId": {
+            "type": "string",
+            "example": "f49d6e1af196280b6cd962a2a"
+          },
+          "key": {
+            "type": "string",
+            "example": "684171f410b7162ee35f5f22-68497b970ced6e971def040a"
+          },
+          "iv": {
+            "type": "string",
+            "example": "f49d6e1af196280b6cd962a2a3848fe93b100c2a"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      }
+      
+    }
+  },
+  "paths": {
+
+
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login",
+        "description": "Login to generate a token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                }
+              },
+              "required": ["email", "password"]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login with sucess.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Email send!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, Password or Email missing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Please provide an email and password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials or user not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "User not found or Invalid Password"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout/{id}": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Logout",
+        "description": "Function to delete the token",
+        "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The ID of the user to logout.",
+          "schema": {
+            "type": "string",
+            "example": "64a8f3e25bde312c8c2f9bd7"
+          }
+        }
+      ],
+        "responses": {
+          "200": {
+            "description": "Logout with sucess.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Successfully logged out."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid user ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "User not in DB!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get all Users",
+        "description": "Get all the users in the database. You can search with a query on the route.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved users data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "type":"object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "last_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit_per_page": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "docs_in_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "total_docs": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/User"
+                          }
+                        }
+                      }                       
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["User"],
+        "summary": "Create a new user",
+        "description": "Create a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "123456789"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "user name"
+                  }
+                },
+                "required": ["email", "password", "name"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                       "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, missing required fields or duplicate email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "This email already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity, error creating user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }, 
+      "delete": {
+        "tags": ["User"],
+        "summary": "Delete all users",
+        "description": "Delete all users of database",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "All users deleted"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user by ID",
+        "description": "This endpoint retrieves a user by their ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to retrieve.",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found and returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "No user with id: 507f1f77bcf86cd799439011"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "Delete a user by ID",
+        "description": "This endpoint delete a user by ID",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the user to retrieve.",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User deleted successfully"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "No user with id: {id}"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }, 
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user by ID",
+        "description": "This endpoint update user data by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of user to update",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          },
+          {
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "description": "User data allowed to update",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "new name"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "user@example.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                       "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update options provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid update options provided."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+
+    "/vaults": {
+      "get": {
+        "tags": ["Vaults"],
+        "summary": "Get all Vaults",
+        "description": "This endpoint retreive all vaults of the database.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved samplesCharacteristics data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "type":"object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "last_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit_per_page": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "docs_in_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "total_docs": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                           "$ref": "#/components/schemas/Vault"
+                          }
+                        }
+                      }                       
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Vaults"],
+        "summary": "Create a new vault",
+        "description": "This endpoint creates a new vault. ",
+        "security":[
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "vault name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Vault created with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Vault"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Missing required field in the request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity, error creating vault",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating vault"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Vaults"],
+        "summary": "Delete all Vaults",
+        "description": "Delete all Vaults of database",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "All vaults deleted"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaults/{id}": {
+      "get": {
+        "tags": ["Vaults"],
+        "summary": "Get a vault by ID",
+        "description" : "This endpoint get a vault by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the vault to retrieve.",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description": "Vault found and returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Vault"
+                    }
+                  }
+                }
+              }
+            }
+          }, 
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault Not found or access denied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Vault not found or access denied"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Vaults"],
+        "summary": "Delete a vault by ID",
+        "description": "This endpoint delete a vault by ID.",
+        "parameters":[
+          {
+            "in":"path",
+            "name": "id",
+            "required": true,
+            "description": "The Vault ID to delete",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+             "description": "Vault deleted successfully"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not Found or you don't have permission!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Vault not Found or you don't have permission!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Vaults"],
+        "summary": "Update Vault by ID",
+        "description": "This endpoint update the vault by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of vault to update",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          },
+          {
+            "in": "body",
+            "name": "vault",
+            "required": true,
+            "description": "Fields allowed to update",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "Other name"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vault updated with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Vault"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update options provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid update options provided."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Vault not found or you're not authorized to edit it"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaults/me": {
+      "get": {
+        "tags": ["Vaults"],
+        "summary": "Get all my Vaults",
+        "description": "This endpoint retreive all vaults of the database related to me.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved my vaults",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {   
+                    "$ref": "#/components/schemas/Vault"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+
+    "/vaultUser": {
+      "get": {
+        "tags": ["VaultUser"],
+        "summary": "Get all VaultUsers",
+        "description": "This endpoint retreive all VaultUsers of the database.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved vaultUsers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "type":"object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "last_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit_per_page": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "docs_in_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "total_docs": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/VaultUser"
+                          }
+                        }
+                      }                       
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["VaultUser"],
+        "summary": "Create a vaultUser",
+        "description": "This endpoint creates a vautUser.",
+        "security":[
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties": {
+                  "vaultId": {
+                    "type": "string",
+                    "example": "a134bc3bc5e5f3242948cd8a"
+                  },
+                  "userId": {
+                    "type": "string",
+                    "example": "a134bc3bc5e5f3242948cd8a"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "read"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "VaultUser created with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/VaultUser"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Missing required field in the request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault or User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Vault / User not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["VaultUser"],
+        "summary": "Delete all vaultUsers",
+        "description": "Delete all vaultUsers of database",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "All vaultUsers deleted"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaultUser/{id}": {
+      "get": {
+        "tags": ["VaultUser"],
+        "summary": "Get a vaultUser by ID",
+        "description" : "This endpoint get a vaultUser by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the vaultuser to retrieve.",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description": "VaultUser found and returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/VaultUser"
+                    }
+                  }
+                }
+              }
+            }
+          }, 
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "VaultUser Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "VaultUser Not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["VaultUser"],
+        "summary": "Delete a vaultUser by ID",
+        "description": "This endpoint delete a vaultUser by ID.",
+        "parameters":[
+          {
+            "in":"path",
+            "name": "id",
+            "required": true,
+            "description": "The VaultUser ID to delete",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+             "description": "VaultUser {id} removed successfully."
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "VaultUser not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "VaultUser not Found!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["VaultUser"],
+        "summary": "Update vaultUser by ID",
+        "description": "This endpoint update the vaultUser by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of vaultUser to update",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          },
+          {
+            "in": "body",
+            "name": "vaultUser",
+            "required": true,
+            "description": "Fields allowed to update",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "example": "readWrite"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "VaultUser updated with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/VaultUser"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update options provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid update options provided."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaultUser/vault/{id}/": {
+      "get": {
+        "tags": ["VaultUser"],
+        "summary": "Get all vaultUsers of vault by vaultId",
+        "description": "This endpoint get all vaultUsers of a vault by vaultId.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the vault to to get all vaultUsers associated.",
+            "schema": {
+              "type": "string",
+              "example": "64fd6e1af196280b6cd9627e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "VaultUsers successfully retrived.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {   
+                    "$ref": "#/components/schemas/VaultUser"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "You do not have permission to view this vault's users."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault / VaultUser not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Vault not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+        }
+      }
+    },
+
+
+    "/category": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get all categories",
+        "description": "This endpoint retreive all categories of the database.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "type":"object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "last_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit_per_page": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "docs_in_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "total_docs": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Categories"
+                          }
+                        }
+                      }                       
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Category"],
+        "summary": "Create a category",
+        "description": "This endpoint creates a categorie.",
+        "security":[
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "properties": {
+                  "vaultId": {
+                    "type": "string",
+                    "example": "a134bc3bc5e5f3242948cd8a"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "categorie name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Category created with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Categories"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Missing required field in the request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Vault not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Delete all categories",
+        "description": "Delete all categories of database",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "All categories deleted"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/{id}": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get a category by ID",
+        "description" : "This endpoint get a category by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the category to retrieve.",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description": "Category found and returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Categories"
+                    }
+                  }
+                }
+              }
+            }
+          }, 
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Category Not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Delete a category by ID",
+        "description": "This endpoint delete a category by ID.",
+        "parameters":[
+          {
+            "in":"path",
+            "name": "id",
+            "required": true,
+            "description": "The category ID to delete",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+             "description": "Category {id} removed successfully."
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Category not Found!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Category"],
+        "summary": "Update category by ID",
+        "description": "This endpoint update the category by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of category to update",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          },
+          {
+            "in": "body",
+            "name": "category",
+            "required": true,
+            "description": "Fields allowed to update",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "other name"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category updated with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Categories"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update options provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid update options provided."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Category Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Category Not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/category/vault/{id}/": {
+      "get": {
+        "tags": ["Category"],
+        "summary": "Get all categories of vault by vaultId",
+        "description": "This endpoint get all categories of a vault by vaultId.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the vault to to get all categories associated.",
+            "schema": {
+              "type": "string",
+              "example": "64fd6e1af196280b6cd9627e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories successfully retrived.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {   
+                    "$ref": "#/components/schemas/Categories"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "You do not have permission to view this vault's users."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Vault not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+        }
+      }
+    },
+
+
+    "/passkeys": {
+      "get": {
+        "tags": ["Passkeys"],
+        "summary": "Get all passkeys",
+        "description": "This endpoint retreive all passkeys of the database.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved passkeys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "type":"object",
+                      "properties": {
+                        "page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "last_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "limit_per_page": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "docs_in_page": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "total_docs": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Passkeys"
+                          }
+                        }
+                      }                       
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Passkeys"],
+        "summary": "Create a passkey",
+        "description": "This endpoint creates a passkey.",
+        "security":[
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type":"object",
+                "required": ["vaultId", "name", "username"],
+                "properties": {
+                  "vaultId": {
+                    "type": "string",
+                    "example": "a134bc3bc5e5f3242948cd8a"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "categorie name"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "teste@teste.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "categoryId": {
+                    "type": "string",
+                    "example": "a134bc3bc5e5f3242948cd8a"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Passkey created with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Passkeys"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, missing required fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Missing required field in the request"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Vault not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Passkeys"],
+        "summary": "Delete all passkeys",
+        "description": "Delete all passkeys of database",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "All Passkeys deleted"
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/passkeys/{id}": {
+      "get": {
+        "tags": ["Passkeys"],
+        "summary": "Get a passkey by ID",
+        "description" : "This endpoint get a passkey by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the passkey to retrieve.",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description": "Passkey found and returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Passkeys"
+                    }
+                  }
+                }
+              }
+            }
+          }, 
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Passkey Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Passkey Not found or access denied"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Passkeys"],
+        "summary": "Delete a passkey by ID",
+        "description": "This endpoint delete a passkey by ID.",
+        "parameters":[
+          {
+            "in":"path",
+            "name": "id",
+            "required": true,
+            "description": "The passkey ID to delete",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+             "description": "Passkey {id} removed successfully."
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Passkey not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type":"string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Passkey not Found!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Passkeys"],
+        "summary": "Update passkey by ID",
+        "description": "This endpoint update the passkey by ID.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of passkey to update",
+            "schema": {
+              "type": "string",
+              "example": "507f1f77bcf86cd799439011"
+            }
+          },
+          {
+            "in": "body",
+            "name": "passkey",
+            "required": true,
+            "description": "Fields allowed to update",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "other name"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "passkeyChanged"
+                },
+                "categoryId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                },
+                "username": {
+                  "type": "string",
+                  "example": "otherUsername"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Passkey updated with sucess",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Sucess"
+                    },
+                    "results": {
+                      "$ref": "#/components/schemas/Passkeys"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid update options provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid update options provided."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied, missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Access denied!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Passkey or Category Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Passkey / Category Not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/passkeys/export/vault/{id}/": {
+      "get": {
+        "tags": ["Passkeys"],
+        "summary": "Export all passkeys of vault by vaultId",
+        "description": "This endpoint export all passkeys in a json file.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the vault to to get all passkeys associated.",
+            "schema": {
+              "type": "string",
+              "example": "64fd6e1af196280b6cd9627e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "JSON file containing all passkeys.",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string", "example": "teste" },
+                      "username": { "type": "string", "example": "teste123" },
+                      "password": { "type": "string", "example": "passwordEncriptada" },
+                      "categoryId": { "type": ["string", "null"], "example": null }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "You do not have permission to view this vault's users."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Vault not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+        }
+      }
+    },
+    "/passkeys/import/vault/{id}/": {
+      "post": {
+        "tags": ["Passkeys"],
+        "summary": "Import passkeys to vault by vaultId",
+        "description": "This endpoint allows importing passkeys by uploading a JSON file.",
+        "security":[
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the vault to import passkeys to.",
+            "schema": {
+              "type": "string",
+              "example": "64fd6e1af196280b6cd9627e"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "JSON file containing passkeys"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Passkeys successfully retrived.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 201
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Success"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "10 passkeys imported"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "You do not have permission to view this vault's users."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Vault not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+        }
+      }
+    },
+    "/passkeys/vault/{id}/": {
+      "get": {
+        "tags": ["Passkeys"],
+        "summary": "Get all passkeys of vault by vaultId",
+        "description": "This endpoint get all passkeys of a vault by vaultId.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the vault to to get all passkeys associated.",
+            "schema": {
+              "type": "string",
+              "example": "64fd6e1af196280b6cd9627e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Passkeys successfully retrived.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {   
+                    "$ref": "#/components/schemas/Passkeys"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "You do not have permission to view this vault's users."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Vault not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "httpCode": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "action": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "results": {
+                      "type": "string",
+                      "example": "Vault not found."
+                    }
+                  }
+                }
+              }
+            }
+          }
+          
+        }
+      }
+    }
+       
+  }
+}
+

@@ -72,11 +72,11 @@ app.use(mongoSanitize());
 app.use(helmet());
 
 /** Swagger configuration */
-// const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger.json');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
-// // Remove helmet to run on AWS
-// app.use('/api-docs', (req: any, res: any, next: any) => { res.removeHeader('Content-Security-Policy'); next(); }, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// Remove helmet to run on AWS
+app.use('/api-docs', (req: any, res: any, next: any) => { res.removeHeader('Content-Security-Policy'); next(); }, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req: any, res: any, next: any) => {
     let m_colorized: string = req.method
