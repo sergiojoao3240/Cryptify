@@ -1,7 +1,7 @@
 http:
   routers:
     frontend:
-      rule: "Host(`localhost`)"
+      rule: "Host(`cryptify.ss-centi.com`)"
       entryPoints:
         - http
       middlewares:
@@ -9,7 +9,7 @@ http:
       service: frontend
 
     frontend-secure:
-      rule: "Host(`localhost`)"
+      rule: "Host(`cryptify.ss-centi.com`)"
       entryPoints:
         - https
       tls:

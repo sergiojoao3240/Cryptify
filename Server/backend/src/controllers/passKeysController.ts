@@ -489,18 +489,28 @@ const createSharedPassKey = asyncHandler(async (req: RequestExt, res: Response, 
 
 
 // função para abrir o link e desencriptar a password -> por terminar
-export const getShareData = asyncHandler(async (req, res, next) => {
+export const getShareData = asyncHandler(async (req: any, res: any, next: any) => {
     const { id } = req.params;
-    const share = await ShareLink.findById(id);
+    const share = await SharedPasskey.findById(id);
   
     if (!share || share.expiresAt < new Date() || share.viewsRemaining < 1) {
-      return res.status(410).json({ message: 'Este link expirou ou já foi utilizado.' });
+      return res.status(410).json({ message: 'Expired link or used.' });
     }
   
     share.viewsRemaining -= 1;
     await share.save();
+
+    // Falta desencriptar a palavra passe e enviar
+    // const keyRaw = passkey.key;
+    // const key = crypto.createHash('sha256').update(keyRaw!).digest('base64').substr(0, 32);
+    // const iv = Buffer.from(passkey.iv!, 'hex');
+
+    // const decipher = crypto.createDecipheriv(process.env.ALGORITHM!, key, iv);
+    // let decrypted = decipher.update(passkey.password, 'hex', 'utf-8');
+    // decrypted += decipher.final('utf-8');
+    // passkey.password = decrypted;
   
-    res.json({ data: share.data }); // A decriptação acontece no frontend com a key do fragmento
+    res.json({ data: share.passkey });
   });
   
 
