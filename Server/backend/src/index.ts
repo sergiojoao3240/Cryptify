@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import cors from "cors";
 import dotenv from "dotenv";
+import logger from "./config/logger";
+import morgan from "morgan";
 
 console.log("\n\t--- Cryptify ---")
 console.log("\n\t--- Run Mode - " + process.env.NODE_ENV?.cyan + " ---")
@@ -78,32 +80,32 @@ const swaggerDocument = require('./swagger.json');
 // Remove helmet to run on AWS
 app.use('/api-docs', (req: any, res: any, next: any) => { res.removeHeader('Content-Security-Policy'); next(); }, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use((req: any, res: any, next: any) => {
-    let m_colorized: string = req.method
-    switch (req.method) {
-        case 'GET':
-            m_colorized = m_colorized.green
-            break;
-        case 'POST':
-            m_colorized = m_colorized.yellow
-            break;
-        case 'DELETE':
-            m_colorized = m_colorized.red
-            break;
-        case 'PATCH':
-            m_colorized = m_colorized.magenta
-            break;
-        default:
-            m_colorized = m_colorized.blue
-            break;
-    }
+// app.use((req: any, res: any, next: any) => {
+//     let m_colorized: string = req.method
+//     switch (req.method) {
+//         case 'GET':
+//             m_colorized = m_colorized.green
+//             break;
+//         case 'POST':
+//             m_colorized = m_colorized.yellow
+//             break;
+//         case 'DELETE':
+//             m_colorized = m_colorized.red
+//             break;
+//         case 'PATCH':
+//             m_colorized = m_colorized.magenta
+//             break;
+//         default:
+//             m_colorized = m_colorized.blue
+//             break;
+//     }
     
-    const requestDate = new Date().toLocaleString();
+//     const requestDate = new Date().toLocaleString();
 
-    console.log(`From: ${req.ip}, At: ${requestDate} > Received `.cyan + `${m_colorized}` + ` request at ${req.url}\n`.cyan);
+//     console.log(`From: ${req.ip}, At: ${requestDate} > Received `.cyan + `${m_colorized}` + ` request at ${req.url}\n`.cyan);
     
-    next(); // Call the next middleware in the chain
-});
+//     next();
+// });
 
 
 /* Control the number of requests that API can accept */
@@ -112,6 +114,24 @@ const limiter = rateLimit({
     max: 100000
 })
 app.use(limiter);
+
+
+/* Use Winston with Morgon to Logging System */
+const stream = {
+  write: (message: string) => logger.http(message.trim()),
+};
+morgan.token("client-ip", (req: any) => {
+  return req.ip;
+});
+
+/* Middleware to Requests */
+app.use(morgan("From: :client-ip, Received :method :url, Status - :status, Content-Length - :res[content-length], Time - :response-time ms", { stream }));
+
+/* Middleware of Errors */
+app.use((err: Error, req: any, res: any, next: any) => {
+  logger.error(err);
+  res.status(500).send("Internal Error - Server");
+});
 
 /* ROUTES */
 app.use("/users", UserRouter);
@@ -139,7 +159,7 @@ openConnections().then(async () => {
     await Start_WebSocketServer(server, Number(process.env.SV_PORT), ws_urls);
 
     server.listen(Number(process.env.SV_PORT), () => {
-    console.log(`Express Server Started on port ${process.env.SV_PORT}`.green);
+    logger.info(`🚀 Express Server Started on port ${process.env.SV_PORT}`);
     });
 
 });

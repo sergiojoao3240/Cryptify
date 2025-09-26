@@ -9,7 +9,7 @@ export function errorHandler(error: any, req: any, res: any, next: any) {
     let httpCode = error.statusCode;
 
     /* Log to console for dev */
-    console.log("Error :", error);
+    //console.log("Error :", error);
 
     switch (error.name) {
 

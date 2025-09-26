@@ -1,6 +1,7 @@
 //_____________IMPORTS____________
 // Mongoose
 import mongoose from 'mongoose';
+import logger from '../../config/logger';
 
 //_____________IMPORTS____________
 
@@ -15,9 +16,9 @@ export async function connectTo_Mongoose(serverURL: string, MONGO_DB: string) {
             useFindAndModify: false
         });
         
-        console.log(`MONGODB SUCCESS \t DB URL:\t ${process.env.MONGO_URL}${process.env.MONGO_DB}`.green);
+        logger.info(`MONGODB SUCCESS \t DB URL:\t ${process.env.MONGO_URL}${process.env.MONGO_DB}`.green);
     } catch (error: any) {
-        console.log(`MONGODB ERROR \t DB URL:\t ${process.env.MONGO_URL}${process.env.MONGO_DB}\nError:${error.message}`.red);
+        logger.error(`MONGODB ERROR \t DB URL:\t ${process.env.MONGO_URL}${process.env.MONGO_DB}\nError:${error.message}`.red)
     }
 }
 

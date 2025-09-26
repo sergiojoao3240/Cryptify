@@ -10,6 +10,9 @@ import { ConfirmPassswordUpdated } from "./email_models/confirmPasswordUpdated";
 import { NewPinMessage } from "./email_models/authPin";
 import { SharedPasskey } from "./email_models/sharedPasskey";
 
+// Config
+import logger from "../../config/logger";
+
 //___________________IMPORTS______________________
 
 
@@ -57,10 +60,10 @@ export async function Email(email: string, subjectB: string, typeMessage: string
 
     transporter.sendMail(data, function (error: any) {
         if (error) {
-            console.log(error)
+            logger.error(error)
             throw new ErrorResponse(`Error sending an Email`, 500);
         } else {
-            console.log(`Email sent to ${email} with subject: ${subjectB}`);
+            logger.info(`Email sent to ${email} with subject: ${subjectB}`);
         }
     });
 };
@@ -98,10 +101,10 @@ export async function EmailFile(file: any, filename: string, email: string) {
 
     transporter.sendMail(data, function (error: any) {
         if (error) {
-            console.log(error)
+            logger.error(error)
             throw new ErrorResponse(`Error sending an Email`, 500);
         } else {
-            console.log(`Email sent to ${email}.`);
+            logger.info(`Email sent to ${email}.`);
         }
     });
 }

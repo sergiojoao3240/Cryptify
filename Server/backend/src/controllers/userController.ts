@@ -3,6 +3,9 @@
 import { Response, NextFunction } from "express";
 import mongoose from 'mongoose';
 
+// Config
+import logger from "../config/logger";
+
 // Models
 import User from "../models/userModel";
 import PinUser from "../models/pinUserModel";
@@ -167,7 +170,7 @@ const forgotPassword = asyncHandler(async (req: RequestExt, res: Response, next:
     try {
       await Email(email, "Change Password", "AuthPin", "", randomPin);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return next(new ErrorResponse(`Email could not be sent`, 400));
     }
 
@@ -237,7 +240,7 @@ const changePassword = asyncHandler(async (req: RequestExt, res: Response, next:
     try {
       await Email(user.email, "Password Changed", "ConfirmPassswordUpdated");
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       return next(new ErrorResponse(`Email could not be sent`, 400));
     }
 
@@ -277,7 +280,7 @@ const updatePassword = asyncHandler(async (req: RequestExt, res: Response, next:
   try {
     await Email(user.email, "Password Changed", "ConfirmPassswordUpdated");
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return next(new ErrorResponse(`Email could not be sent`, 400));
   }
 

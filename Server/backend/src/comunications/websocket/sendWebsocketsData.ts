@@ -1,3 +1,7 @@
+//_____________IMPORTS____________
+import logger from '../../config/logger';
+//_____________IMPORTS____________
+
 let socket: any;
 
 /**
@@ -20,7 +24,8 @@ export const websocketSendData = async (data_toSend: any, destination_room: stri
     };
 
     socket.emit("sendObjectToServer", data);
-    console.log("Sent Data: " + data.content + "to: " + data.destination);
+    logger.info("Sent Data: " + data.content + "to: " + data.destination)
+
     return true;
   } catch (error) {
     console.error("Error sending WebSocket Data", error);

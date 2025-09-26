@@ -3,6 +3,9 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+// Config
+import logger from "../config/logger";
+
 // Models
 import User from "../models/userModel";
 import PinUser from "../models/pinUserModel";
@@ -60,7 +63,7 @@ const login = asyncHandler(async (req: RequestExt, res: Response, next: NextFunc
     try {
         await Email(email, "Pin to Login", "AuthPin", "", randomPin);
     } catch (error) {
-        console.log(error);
+        logger.error(error);
         return next(new ErrorResponse(`Email could not be sent`, 400));
     }
 
