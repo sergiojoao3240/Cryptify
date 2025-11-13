@@ -1,0 +1,18 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Validate PIN</h2>
+    <p class="info">A PIN was sent to <strong>{{ email }}</strong>.</p>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="pin">PIN</label>
+        <input type="text" id="pin" [(ngModel)]="pin" name="pin" maxlength="8" placeholder="Introduza o PIN" required/>
+      </div>
+
+      <button type="submit" class="btn-primary">Validate</button>
+    </form>
+
+    <p *ngIf="error" class="error-msg">{{ error }}</p>
+    <p class="link"><a routerLink="/login">Back to login</a></p>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <h2>Cryptify</h2>
+    <div class="user-menu-wrapper">
+      <div class="user-icon" (click)="toggleUserMenu()">👤</div>
+      <div class="dropdown" *ngIf="showUserMenu">
+        <a routerLink="/profile">Profile</a>
+        <a (click)="logout()">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Vault Selector -->
+  <div class="vault-selector">
+    <button *ngFor="let vault of vaults"
+            [class.active]="vault === selectedVault"
+            (click)="selectVault(vault)">
+      {{ vault.name }}
+    </button>
+    <button class="btn-add-vault">+ New Vault</button>
+  </div>
+
+  <!-- Search & Add Password -->
+  <div class="dashboard-actions">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search passwords..." />
+    <button class="btn-primary">Add New Password</button>
+  </div>
+
+  <!-- Password List -->
+  <div class="vault-passwords">
+    <div *ngFor="let entry of filteredPasskeys()" class="password-card">
+      <h3>{{ entry.name }}</h3>
+      <p>Username: {{ entry.username }}</p>
+      <p>Password: {{ entry.password }}</p>
+      <div class="card-actions">
+        <button>Edit</button>
+        <button>Delete</button>
+        <button>Copy</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -72,7 +72,7 @@ const login = asyncHandler(async (req: RequestExt, res: Response, next: NextFunc
 
 
 /* @desc        Log user out / clear cookie
- * @route       GET /auth/logout
+ * @route       GET /auth/logout/:id
  * @access      Private
 */
 const logout = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {

@@ -142,6 +142,17 @@ app.use("/category", CategoryRoute);
 app.use("/passkeys", PassKeysRoute);
 
 
+/* Root Route */
+app.use("/", async (req: any, res: any, next: any) => {
+    console.log(`Welcome to Cryptify main page!`);
+    try {
+        res.status(200).send(`Welcome to Cryptify main page!`);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
+
 /* Error handler middleware */
 app.use(errorHandler);
 

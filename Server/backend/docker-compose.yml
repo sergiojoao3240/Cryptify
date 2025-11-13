@@ -11,11 +11,15 @@ services:
       - traefik-proxy # connection with External DB
       - api-internal-network # internal network for connection with redis
     tty: true
+    volumes:
+      - backend-logs:/code/logs
 
 volumes:
   uploads:
     driver: local
-
+  backend-logs: 
+    external: true
+      
 networks:
   api-internal-network:
     external: true

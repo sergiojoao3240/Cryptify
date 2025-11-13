@@ -1,0 +1,36 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Welcome to Cryptify</h2>
+    <h3>Create an Account</h3>
+   <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="name">Nome</label>
+        <input type="text" id="name" [(ngModel)]="name" name="name" placeholder="Seu nome completo" required />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" [(ngModel)]="email" name="email" placeholder="exemplo@email.com" required />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Palavra-passe</label>
+        <input type="password" id="password" [(ngModel)]="password" name="password" placeholder="••••••••" required />
+    </div>
+
+    <div class="form-group">
+        <label for="confirmPassword">Confirmar Palavra-passe</label>
+        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="••••••••" required />
+    </div>
+
+    <button type="submit" class="btn-primary">Criar Conta</button>
+    </form>
+
+    <p *ngIf="error" class="error-msg">{{ error }}</p>
+    <p *ngIf="message" class="success-msg">{{ message }}</p>
+
+    <p class="link">Already have an account ?
+      <a routerLink="/login">Back to Login</a>
+    </p>
+  </div>
+</div>
