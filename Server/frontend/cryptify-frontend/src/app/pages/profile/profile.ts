@@ -73,10 +73,6 @@ export class Profile {
     this.userMenuOpen = !this.userMenuOpen;
   }
 
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
   logout() {
     localStorage.clear();
     this.router.navigate(['/login']);

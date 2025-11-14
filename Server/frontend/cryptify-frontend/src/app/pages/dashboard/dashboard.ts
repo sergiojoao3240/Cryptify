@@ -2,13 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth';
-import { UserService } from '../../services/user';
 import { VaultService } from '../../services/vault';
-import { CategoryService } from '../../services/category';
 import { PasskeyService } from '../../services/passkey';
-import { VaultUserService } from '../../services/vault-user';
 import { Router, RouterLink } from '@angular/router';
-import { Passkey, Vault, Category, VaultUser } from '../../models/interfaces';
+import { Passkey, Vault } from '../../models/interfaces';
 import { HttpResponse } from '@angular/common/http';
 
 
@@ -36,7 +33,6 @@ export class Dashboard {
   
   constructor(
     private authService: AuthService,
-    private userService: UserService,
     private vaultService: VaultService,
     private passkeyService: PasskeyService,
     private router: Router
