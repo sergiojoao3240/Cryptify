@@ -163,4 +163,44 @@ const updateToken = asyncHandler(async (req: RequestExt, res: Response, next: Ne
 });
 
 
-export {login, logout, validateLogin, updateToken};
+// exports are declared at the end of the file
+
+/* @desc        Refresh token without password
+ * @route       POST /auth/refresh
+ * @access      Private (requires valid refresh token in Authorization header)
+ */
+const refreshToken = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return next(new ErrorResponse("No token provided", 403));
+    }
+
+    const token = authHeader.split("Bearer ")[1];
+
+    // verify token
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET_KEY!) as JwtPayload;
+        const user = await User.findById(decoded.sub);
+        if (!user) {
+            return next(new ErrorResponse("User not found", 404));
+        }
+
+        // check stored refresh token matches the provided one
+        if (!user.refresh_token || user.refresh_token !== token) {
+            return next(new ErrorResponse("Invalid refresh token", 403));
+        }
+
+        // generate and persist a new refresh token (rotation)
+        user.refresh_token = user.generateRefreshToken();
+        await user.save();
+
+        let _user = user.toJSON();
+        delete _user.password;
+
+        return res.status(201).send(genMessage(200, _user));
+    } catch (err) {
+        return next(new ErrorResponse("Invalid or expired token", 403));
+    }
+});
+
+export {login, logout, validateLogin, updateToken, refreshToken};

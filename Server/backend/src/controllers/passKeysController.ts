@@ -138,7 +138,7 @@ const getById = asyncHandler(async (req: RequestExt, res: Response, next: NextFu
     const passkeyID = req.params.id;
     const userId = req.user!._id;
   
-    const passkey = await PassKeys.findById(passkeyID);
+    const passkey = await PassKeys.findById(passkeyID).populate('categoryId', 'name');
     if (!passkey) {
         return next(new ErrorResponse(`Passkey not found or access denied!`, 404));
     }
@@ -250,31 +250,33 @@ const updatePasskeyById = asyncHandler(async (req: RequestExt, res: Response, ne
         }
     }
 
-    let password = req.body.password;
-    if (password === undefined && req.query && req.body.password !== "") {
-        try {
-            password = generatePasswordFromQuery(req.query);
-        } catch (err: any) {
-            return next(new ErrorResponse(err.message, 400));
+    if (req.body.password) {
+        let password = req.body.password;
+        if (password === undefined && req.query && req.body.password !== "") {
+            try {
+                password = generatePasswordFromQuery(req.query);
+            } catch (err: any) {
+                return next(new ErrorResponse(err.message, 400));
+            }
         }
-    }
 
-    let checkPasswordExpose = await checkPasswordPwned(password);
-    if (checkPasswordExpose > 0) {
-        return next(new ErrorResponse(`This password has been seen ${checkPasswordExpose} times before in data breaches! Please try another one!.`, 400));
-    }
+        let checkPasswordExpose = await checkPasswordPwned(password);
+        if (checkPasswordExpose > 0) {
+            return next(new ErrorResponse(`This password has been seen ${checkPasswordExpose} times before in data breaches! Please try another one!.`, 400));
+        }
 
-    if (password) {
-        const keyRaw = passkey.key;
-        const key = crypto.createHash('sha256').update(keyRaw!).digest('base64').substr(0, 32);
-        const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipheriv(process.env.ALGORITHM!, key, iv);
-        let encrypted = cipher.update(password, 'utf-8', 'hex');
-        encrypted += cipher.final('hex');
+        if (password) {
+            const keyRaw = passkey.key;
+            const key = crypto.createHash('sha256').update(keyRaw!).digest('base64').substr(0, 32);
+            const iv = crypto.randomBytes(16);
+            const cipher = crypto.createCipheriv(process.env.ALGORITHM!, key, iv);
+            let encrypted = cipher.update(password, 'utf-8', 'hex');
+            encrypted += cipher.final('hex');
 
-        passkey.password = encrypted;
-        passkey.iv = iv.toString('hex');
-    }
+            passkey.password = encrypted;
+            passkey.iv = iv.toString('hex');
+        }
+    } 
 
     if (req.body.name) passkey.name = req.body.name;
     if (req.body.username) passkey.username = req.body.username;
@@ -300,7 +302,7 @@ const getAllPasskeysOfVaultID = asyncHandler(async (req: RequestExt, res: Respon
         return next(new ErrorResponse("Vault not found.", 404));
     }
   
-    const allPasskeys = await PassKeys.find({ vaultId: vault._id });
+    const allPasskeys = await PassKeys.find({ vaultId: vault._id }).populate('categoryId', 'name');
 
     const isInVault = await VaultUser.exists({ vaultId: vault._id, userId });
 
@@ -308,7 +310,15 @@ const getAllPasskeysOfVaultID = asyncHandler(async (req: RequestExt, res: Respon
         return next(new ErrorResponse("Access Denied!.", 403));
     }
 
-    return res.status(200).json(genMessage(200, allPasskeys, req.newToken));
+    const sanitizedPasskeys = allPasskeys.map(pk => {
+        const passKeyObj = pk.toJSON();
+        delete passKeyObj.hash;
+        delete passKeyObj.key;
+        delete passKeyObj.iv;
+        return passKeyObj;
+    });
+
+    return res.status(200).json(genMessage(200, sanitizedPasskeys, req.newToken));
 });
 
 

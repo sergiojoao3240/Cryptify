@@ -1,43 +1,96 @@
 <div class="dashboard-container">
-  <!-- Header -->
-  <header class="dashboard-header">
-    <h2>Cryptify</h2>
-    <div class="user-menu-wrapper">
-      <div class="user-icon" (click)="toggleUserMenu()">👤</div>
-      <div class="dropdown" *ngIf="showUserMenu">
-        <a routerLink="/profile">Profile</a>
-        <a (click)="logout()">Logout</a>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">🔐 Cryptify</div>
+
+    <div class="user-section">
+      <div class="user-icon" (click)="toggleUserMenu()">
+        <i class="fa-solid fa-user">👤</i>
+      </div>
+
+      <div class="user-menu" [class.open]="userMenuOpen">
+        <p (click)="goToAccount()">
+          <i class="fa-regular fa-user"></i> My Account
+        </p>
+        <p (click)="logout()">
+          <i class="fa-solid fa-sign-out-alt"></i> Logout
+        </p>
       </div>
     </div>
   </header>
 
-  <!-- Vault Selector -->
-  <div class="vault-selector">
-    <button *ngFor="let vault of vaults"
-            [class.active]="vault === selectedVault"
-            (click)="selectVault(vault)">
-      {{ vault.name }}
-    </button>
-    <button class="btn-add-vault">+ New Vault</button>
-  </div>
+  <!-- MAIN LAYOUT -->
+  <div class="layout">
 
-  <!-- Search & Add Password -->
-  <div class="dashboard-actions">
-    <input type="text" [(ngModel)]="searchQuery" placeholder="Search passwords..." />
-    <button class="btn-primary">Add New Password</button>
-  </div>
+    <!-- LEFT PANEL - VAULTS -->
+    <aside class="vaults-panel">
+      <h3 class="panel-title">📁 Vaults</h3>
 
-  <!-- Password List -->
-  <div class="vault-passwords">
-    <div *ngFor="let entry of filteredPasskeys()" class="password-card">
-      <h3>{{ entry.name }}</h3>
-      <p>Username: {{ entry.username }}</p>
-      <p>Password: {{ entry.password }}</p>
-      <div class="card-actions">
-        <button>Edit</button>
-        <button>Delete</button>
-        <button>Copy</button>
+      <div class="vault-list">
+        <button 
+          *ngFor="let v of vaults" 
+          class="vault-item" 
+          [class.active]="activeVault?._id === v._id" 
+          (click)="selectVault(v)">
+          {{ v.name }}
+        </button>
+
+        <button class="add-vault-btn">+ New Vault</button>
       </div>
-    </div>
+    </aside>
+
+    <!-- CENTER PANEL - PASSWORDS -->
+    <main class="center-panel">
+
+      <div class="passwords-header">
+        <button class="vault-details-btn" routerLink="/vault-details">Vault Details</button>
+        <input class="search-input"  placeholder="🔍 Search passwords..."  [(ngModel)]="searchQuery"  (input)="filterPasswords()"/>
+        <button class="add-pass-btn" (click)="addPasskey()">+ Add Password</button>
+        <button class="export-pass-btn" (click)="exportPasskeys()" [disabled]="exporting" >Export Passwords</button>
+      </div>
+
+      <div class="password-box">
+
+        <!-- TABLE HEADER -->
+        <div class="password-table-header">
+          <div class="table-col-name">Name</div>
+          <div class="table-col-category">Category</div>
+          <div class="table-col-username">Username</div>
+          <div class="table-col-password">Password</div>
+          <div class="table-col-actions">Actions</div>
+        </div>
+
+        <!-- PASSWORD ITEMS AS TABLE ROWS -->
+        <div 
+          class="password-row"  
+          *ngFor="let p of filteredPasskeys">
+
+          <div class="table-col-name">{{ p.name }}</div>
+          <div class="table-col-category">{{ p.categoryId?.name || '-' }}</div>
+          <div class="table-col-username">{{ p.username }}</div>
+          <div class="table-col-password">{{ getDisplayPassword(p._id, p.password) }}</div>
+
+          <div class="table-col-actions">
+             <button class="action-btn" (click)="togglePasswordVisibility(p._id, p)" title="Show/Hide Password">
+                 <i class="fa-regular fa-eye">{{ visiblePasswords[p._id] ? '⌣' : '👁️'}}</i>
+            </button>
+            <button class="action-btn edit" (click)="editPasskey(p._id)" title="Edit">
+              <i class="fa-regular fa-pen-to-square">✏️</i>
+            </button>
+            <button class="action-btn delete"  (click)="deletePasskey(p._id)" title="Delete">
+              <i class="fa-regular fa-trash-can">🗑️</i>
+            </button>
+          </div>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div *ngIf="filteredPasskeys.length === 0" style="text-align: center; padding: 2rem; color: #999;">
+          <p style="font-size: 14px;">No passwords found</p>
+        </div>
+
+      </div>
+    </main>
+
   </div>
 </div>

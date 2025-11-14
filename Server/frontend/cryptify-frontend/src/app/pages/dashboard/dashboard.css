@@ -1,135 +1,400 @@
+/* ============== MAIN LAYOUT ============== */
 .dashboard-container {
-  padding: 2rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 98vh;
   background: linear-gradient(135deg, #2b5876, #4e4376);
-  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.dashboard-header {
+/* ============== HEADER ============== */
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.user-menu-wrapper {
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4e4376;
+  letter-spacing: -0.5px;
+}
+
+.user-section {
   position: relative;
 }
 
 .user-icon {
-  cursor: pointer;
-  font-size: 1.5rem;
-  color: #fff;
-  background-color: #fcfcfc;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease;
+  background: #d3d3d3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-size: 35px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(78, 67, 118, 0.2);
 }
 
 .user-icon:hover {
-  transform: scale(1.2);
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(78, 67, 118, 0.3);
 }
 
-.dropdown {
+.user-menu {
   position: absolute;
+  top: 50px;
   right: 0;
-  top: 100%;
   background: white;
-  color: #333;
-  border-radius: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  width: 160px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  margin-top: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
 }
 
-.dropdown a {
-  display: block;
-  padding: 0.5rem 1rem;
-  text-decoration: none;
-  color: #333;
+.user-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
-.dropdown a:hover {
-  background-color: #f0f0f0;
-}
-
-.vault-selector {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.vault-selector button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 0.5rem;
+.user-menu p {
+  margin: 0;
+  padding: 12px 16px;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #333;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-.vault-selector button.active {
-  background-color: #4e4376;
-  color: white;
+.user-menu p:last-child {
+  border-bottom: none;
 }
 
-.btn-add-vault {
-  background-color: #28a745;
-  color: white;
+.user-menu p:hover {
+  background: #f8f8fa;
+  color: #4e4376;
 }
 
-.dashboard-actions {
+/* ============== LAYOUT GRID ============== */
+.layout {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.dashboard-actions input {
   flex: 1;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  border: none;
+  overflow: hidden;
 }
 
-.btn-primary {
-  background-color: #4e4376;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
+/* ============== LEFT PANEL - VAULTS ============== */
+.vaults-panel {
+  width: 280px;
+  background: white;
+  border-right: 1px solid #e5e5e5;
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
-.vault-passwords {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.password-card {
-  background-color: white;
+.panel-title {
+  margin: 0 0 1rem 0;
+  font-size: 16px;
+  font-weight: 600;
   color: #333;
-  padding: 1rem;
-  border-radius: 1rem;
-  width: 200px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.card-actions {
+.vault-list {
   display: flex;
-  justify-content: space-between;
-  margin-top: 0.5rem;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.card-actions button {
+.vault-item {
+  padding: 10px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f8f8fa;
+  border: none;
+  transition: all 0.2s ease;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.vault-item:hover {
+  background: #efeff5;
+  transform: translateX(4px);
+}
+
+.vault-item.active {
+  background: linear-gradient(135deg, #2b5876, #4e4376);
+  color: white;
+  box-shadow: 0 4px 12px rgba(43, 88, 118, 0.3);
+}
+
+.add-vault-btn {
+  margin-top: 1rem;
+  padding: 10px 12px;
+  background: white;
+  color: #4e4376;
+  border: 2px dashed #4e4376;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.add-vault-btn:hover {
+  background: #f8f8fa;
+}
+
+/* ============== CENTER PANEL - CONTENT ============== */
+.center-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.passwords-header {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  align-items: center;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  border-color: #4e4376;
+  box-shadow: 0 0 0 3px rgba(78, 67, 118, 0.1);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.add-pass-btn, .vault-details-btn, .export-pass-btn {
+  padding: 10px 20px;
   background: #4e4376;
   color: white;
   border: none;
-  border-radius: 0.3rem;
-  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.add-pass-btn:hover, .vault-details-btn:hover, .export-pass-btn:hover {
+  background: #3d3564;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 67, 118, 0.25);
+}
+
+/* ============== PASSWORD BOX ============== */
+.password-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.password-table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: white;
+  border-bottom: 2px solid #e5e5e5;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.password-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: white;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.password-row:hover {
+  background: rgb(224, 224, 224);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.table-col-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.table-col-category {
+  color: #666;
+  font-size: 14px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.table-col-username, .table-col-password {
+  color: #666;
+  font-size: 14px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.table-col-actions {
+  display: flex;
+  gap: 8px;
+  justify-self: center;
+  justify-content: center;
+}
+
+.password-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.password-item:hover {
+  box-shadow: 0 4px 12px rgb(191, 191, 191);
+  transform: translateY(-2px);
+}
+
+.p-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+
+.p-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.p-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.p-username, .p.password {
+  font-size: 13px;
+  color: #666;
+}
+
+
+.p-left span {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+}
+
+.p-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  background: #f0f0f7;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #4e4376;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: #e0dff5;
+  transform: scale(1.08);
+}
+
+.action-btn.delete {
+  color: #e74c3c;
+}
+
+.action-btn.delete:hover {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.action-btn.edit {
+  color: #d2cd41;
+}
+
+.action-btn.edit:hover {
+  background: rgb(195, 191, 81);
+}
+
+.action-btn.delete:hover {
+  background: rgba(244, 92, 75, 0.499);
+}
+
+/* ============== SCROLLBAR STYLING ============== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d0d0d0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }

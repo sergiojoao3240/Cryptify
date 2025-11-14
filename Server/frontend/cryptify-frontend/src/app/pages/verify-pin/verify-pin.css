@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 98vh;
   background: linear-gradient(135deg, #4e4376, #2b5876);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

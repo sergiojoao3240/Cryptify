@@ -50,6 +50,7 @@ const passKeysSchema = new mongoose.Schema<IPassKeys, IPassKeysModel>({
     },
     categoryId: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "Category"
         //required: [true, "Please provide a categoryId"],        
     }
 });

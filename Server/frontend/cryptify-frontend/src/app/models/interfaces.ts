@@ -9,7 +9,7 @@ export interface Passkey {
     password: string;
     vaultId: string;
     name: string;
-    categoryId?: string;
+    categoryId?: Category;
 }
 
 export interface Vault {
