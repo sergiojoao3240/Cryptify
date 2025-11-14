@@ -1,0 +1,79 @@
+<div class="profile-container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">🔐 Cryptify</div>
+
+    <div class="user-section">
+      <div class="user-icon" (click)="toggleUserMenu()">
+        <i class="fa-solid fa-user">👤</i>
+      </div>
+
+      <div class="user-menu" [class.open]="userMenuOpen">
+        <p (click)="goToDashboard()">
+          <i class="fa-regular fa-user"></i> DashBoard
+        </p>
+        <p (click)="logout()">
+          <i class="fa-solid fa-sign-out-alt"></i> Logout
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="layout">
+
+    <!-- CENTER PANEL - Profile -->
+    <main class="center-panel">    
+        <div class="account-box" *ngIf="user">
+
+            <h2>Profile</h2>
+
+            <!-- PROFILE FORM -->
+            <form (ngSubmit)="editProfile()" class="profile-form">
+
+            <div class="profile-row">
+                <label for="name">Name:</label>
+                <input type="text" id="name" [(ngModel)]="user.name" name="name" required>
+            </div>
+
+            <div class="profile-row">
+                <label for="email">Email:</label>
+                <input type="email" id="email" [(ngModel)]="user.email" name="email" required>
+            </div>
+
+            <div class="profile-row">
+                <label>Account created in: </label>
+                <div class="profile-created">{{ formattedDate }}</div>
+            </div>
+
+            <!-- SAVE EDITS BUTTON -->
+            <div class="profile-row">
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+
+            <!-- PASSWORD CHANGE -->
+            <div class="password-section">
+                <div class="profile-row">
+                <label for="oldPassword">Old Password</label>
+                <input type="password" id="oldPassword" [(ngModel)]="oldPassword" name="oldPassword" placeholder="••••••••">
+                </div>
+
+                <div class="profile-row">
+                <label for="newPassword">New Password</label>
+                <input type="password" id="newPassword" [(ngModel)]="newPassword" name="newPassword" placeholder="••••••••">
+                </div>
+
+                <div class="profile-row">
+                <button type="submit" class="btn-primary">Change Password</button>
+                </div>
+            </div>
+
+            
+
+            </form>
+        </div>
+    </main>
+
+  </div>
+</div>

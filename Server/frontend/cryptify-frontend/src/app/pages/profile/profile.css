@@ -1,0 +1,185 @@
+/* ============== MAIN LAYOUT ============== */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  height: 98vh;
+  background: linear-gradient(135deg, #2b5876, #4e4376);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============== HEADER ============== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4e4376;
+  letter-spacing: -0.5px;
+}
+
+.user-section {
+  position: relative;
+}
+
+.user-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #d3d3d3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  font-size: 35px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(78, 67, 118, 0.2);
+}
+
+.user-icon:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(78, 67, 118, 0.3);
+}
+
+.user-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  width: 160px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.user-menu.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-menu p {
+  margin: 0;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #333;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-menu p:last-child {
+  border-bottom: none;
+}
+
+.user-menu p:hover {
+  background: #f8f8fa;
+  color: #4e4376;
+}
+
+/* ============== LAYOUT GRID ============== */
+.layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+
+/* ============== CENTER PANEL - CONTENT ============== */
+.center-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.account-box {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+h2 {
+  color: #4e4376;
+  text-align: center;
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: white;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+}
+
+.profile-row label {
+  flex: 0 0 140px;
+  font-weight: 600;
+  color: #444;
+}
+
+.profile-row input {
+    flex: 1;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s
+}
+
+.profile-row input:focus {
+  border-color: #4e4376;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(78, 67, 118, 0.2);
+}
+
+.btn-primary {
+  width: 60%;
+  margin: 0 auto;
+  background-color: #4e4376;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  font-size: 1rem;
+  border-radius: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background-color: #3d3564;
+  transform: scale(1.02);
+}
+
+.password-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}

@@ -38,9 +38,7 @@ export class Dashboard {
     private authService: AuthService,
     private userService: UserService,
     private vaultService: VaultService,
-    private categoryService: CategoryService,
     private passkeyService: PasskeyService,
-    private vaultUserService: VaultUserService,
     private router: Router
   ) {}
 
@@ -105,7 +103,7 @@ export class Dashboard {
 
   goToAccount() {
     this.userMenuOpen = false;
-    this.router.navigate(['/account']);
+    this.router.navigate(['/profile']);
   }
 
   // Precisa de melhorias

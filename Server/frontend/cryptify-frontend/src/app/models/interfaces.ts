@@ -23,3 +23,10 @@ export interface VaultUser {
     userId: string;
     role: string;
 }
+
+export interface User {
+    _id: string;
+    name: string;
+    email: string;
+    createdAt: string;
+}
