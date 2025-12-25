@@ -1,6 +1,19 @@
 
 services:
 
+  frontend:
+    build:
+      context: ../frontend/cryptify-frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: unless-stopped
+    image: frontend
+    networks:
+      - traefik-proxy
+    ports:
+      - "4200:4200"
+    tty: true
+
   backend:
     build: ./
     container_name: backend
@@ -10,6 +23,8 @@ services:
     networks:
       - traefik-proxy # connection with External DB
       - api-internal-network # internal network for connection with redis
+    ports:
+      - "85:85"
     tty: true
     volumes:
       - backend-logs:/code/logs

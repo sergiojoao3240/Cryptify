@@ -49,5 +49,8 @@ export class VaultService {
     }
     return this.http.get<any>(this.apiVaultUrl, { headers: this.getHeaders(), params });  
   }
+
+
+
   
 }

@@ -2,7 +2,6 @@
 #sed -i 's/\r//' script.sh
 #!/bin/bash
 
-# Define sudo só se for Linux
 SUDO="sudo"
 [ "$(uname)" == "Darwin" ] && SUDO=""
 
@@ -31,7 +30,9 @@ Full_Project_build() {
 Traefik_Portainer_compose_up() {
     $SUDO docker network inspect api-internal-network >/dev/null 2>&1 || $SUDO docker network create --internal api-internal-network
     $SUDO docker network inspect traefik-proxy >/dev/null 2>&1 || $SUDO docker network create traefik-proxy
+    $SUDO docker network inspect backend-logs >/dev/null 2>&1 || $SUDO docker network create backend-logs
     $SUDO docker volume inspect portainer-data >/dev/null 2>&1 || $SUDO docker volume create portainer-data
+    $SUDO docker volume inspect backend-logs >/dev/null 2>&1 || $SUDO docker volume create backend-logs
 
     cd ./portainer || exit
     $SUDO docker compose up -d --build
