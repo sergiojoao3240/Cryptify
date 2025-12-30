@@ -1,7 +1,7 @@
 http:
   routers:
     portainer:
-      rule: "Host(`portainer.cryptify.sgcod3.com`)"
+      rule: "Host(`portainer-cryptify.sgcod3.com`)"
       entryPoints:
         - https
       tls: {}

@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 })
 export class VaultService {
 
-  private apiVaultUrl = 'https://api.cryptify.sgcod3.com/vaults';
+  private apiVaultUrl = 'https://api-cryptify.sgcod3.com/vaults';
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') || '';

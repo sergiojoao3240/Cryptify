@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 })
 export class PasskeyService {
   
-  private apiPasskeyUrl = 'https://api.cryptify.sgcod3.com/passkeys';
+  private apiPasskeyUrl = 'https://api-cryptify.sgcod3.com/passkeys';
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') || '';

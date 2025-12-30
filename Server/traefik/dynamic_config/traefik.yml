@@ -1,7 +1,7 @@
 http:
   routers:
     traefik:
-      rule: "Host(`traefik.cryptify.sgcod3.com`)"
+      rule: "Host(`traefik-cryptify.sgcod3.com`)"
       entryPoints:
         - https
       tls: {}

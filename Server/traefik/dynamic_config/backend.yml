@@ -1,7 +1,7 @@
 http:
   routers:
     backend:
-      rule: "Host(`api.cryptify.sgcod3.com`)"
+      rule: "Host(`api-cryptify.sgcod3.com`)"
       entryPoints:
         - https
       tls: {}
