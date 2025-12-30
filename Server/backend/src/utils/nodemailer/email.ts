@@ -52,7 +52,7 @@ export async function Email(email: string, subjectB: string, typeMessage: string
 
     //Envio da mensagem
     const data = {
-        from: 'centisoftware@gmail.com',
+        from: 'noreply.cryptify@gmail.com',
         to: email,
         subject: subjectB,
         html: html
