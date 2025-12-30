@@ -87,7 +87,7 @@ export async function EmailFile(file: any, filename: string, email: string) {
 
     // Send Email
     const data = {
-        from: 'centisoftware@gmail.com',
+        from: 'noreply.cryptify@gmail.com',
         to: email,
         subject: "File with metrics",
         text: 'Attached file.',
