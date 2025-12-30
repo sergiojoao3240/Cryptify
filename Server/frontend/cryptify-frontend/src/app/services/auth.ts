@@ -7,8 +7,8 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiAuthUrl = 'http://localhost:85/auth';
-  private apiUserUrl = 'http://localhost:85/users';
+  private apiAuthUrl = 'https://api.cryptify.sgcod3.com/auth';
+  private apiUserUrl = 'https://api.cryptify.sgcod3.com/users';
 
   constructor(private http: HttpClient) {}
 

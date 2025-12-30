@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root',
 })
 export class UserService {
-    private apiUserUrl = 'http://localhost:85/users';
+    private apiUserUrl = 'https://api.cryptify.sgcod3.com/users';
 
     private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') || '';

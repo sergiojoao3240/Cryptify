@@ -1,26 +1,14 @@
 http:
   routers:
     portainer:
-      rule: "Host(`portainer.cryptify.ss-centi.com`)"
-      entryPoints:
-        - http
-      middlewares:
-        - redirect
-      service: portainer
-
-    portainer-secure:
-      rule: "Host(`portainer.cryptify.ss-centi.com`)"
+      rule: "Host(`portainer.cryptify.sgcod3.com`)"
       entryPoints:
         - https
-      tls:
-        certResolver: http
-        domains:
-          - main: "portainer.cryptify.ss-centi.com"
+      tls: {}
       service: portainer
-  
+
   services:
     portainer:
       loadBalancer:
         servers:
           - url: http://portainer:9000
-

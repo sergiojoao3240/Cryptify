@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CategoryService {
   
-  private apiCategoryUrl = 'http://localhost:85/category';
+  private apiCategoryUrl = 'https://api.cryptify.sgcod3.com/category';
 
   constructor(private http: HttpClient) {}
 

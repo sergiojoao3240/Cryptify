@@ -21,22 +21,15 @@
 #      loadBalancer:
 #        servers:
 #          - url: http://frontend:4200
-
 http:
   routers:
-    frontend-any:
-      rule: "PathPrefix(`/`)"
-      entryPoints:
-        - http
-      service: frontend
-
-    frontend-any-secure:
-      rule: "PathPrefix(`/`)"
+    frontend:
+      rule: "Host(`cryptify.sgcod3.com`)"
       entryPoints:
         - https
       tls: {}
       service: frontend
-  
+
   services:
     frontend:
       loadBalancer:

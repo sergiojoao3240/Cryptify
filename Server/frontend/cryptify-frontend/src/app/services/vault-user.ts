@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class VaultUserService {
 
-  private apiVaultUserUrl = 'http://localhost:85/vaultUser';
+  private apiVaultUserUrl = 'https://api.cryptify.sgcod3.com/vaultUser';
 
   constructor(private http: HttpClient) {}
 

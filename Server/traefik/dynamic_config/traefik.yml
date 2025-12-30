@@ -1,20 +1,8 @@
 http:
   routers:
     traefik:
-      rule: "Host(`traefik.cryptify.ss-centi.com`)"
-      entryPoints:
-        - http
-      # middlewares:
-        # - auth
-        # - redirect
-      service: api@internal
-
-    traefik-secure:
-      rule: "Host(`traefik.cryptify.ss-centi.com`)"
+      rule: "Host(`traefik.cryptify.sgcod3.com`)"
       entryPoints:
         - https
-    #   #middlewares:
-    #   #
-      tls:
-        certresolver: http
+      tls: {}
       service: api@internal
