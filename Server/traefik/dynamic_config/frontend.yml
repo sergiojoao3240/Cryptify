@@ -1,19 +1,40 @@
+#http:
+#  routers:
+#    frontend:
+#      rule: "PathPrefix(`/`)"
+#      entryPoints:
+#        - http
+#      middlewares:
+#        - redirect
+#      service: frontend
+
+#    frontend-secure:
+#      rule: "PathPrefix(`/`)"
+#      entryPoints:
+#        - https
+#      tls:
+#        certResolver: http
+#      service: frontend
+  
+#  services:
+#    frontend:
+#      loadBalancer:
+#        servers:
+#          - url: http://frontend:4200
+
 http:
   routers:
-    frontend:
-      rule: "Host(`cryptify.ss-centi.com`)"
+    frontend-any:
+      rule: "PathPrefix(`/`)"
       entryPoints:
         - http
-      middlewares:
-        - redirect
       service: frontend
 
-    frontend-secure:
-      rule: "Host(`cryptify.ss-centi.com`)"
+    frontend-any-secure:
+      rule: "PathPrefix(`/`)"
       entryPoints:
         - https
-      tls:
-        certResolver: http
+      tls: {}
       service: frontend
   
   services:
@@ -21,4 +42,5 @@ http:
       loadBalancer:
         servers:
           - url: http://frontend:4200
+
 
