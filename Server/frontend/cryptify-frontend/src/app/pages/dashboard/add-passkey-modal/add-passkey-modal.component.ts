@@ -126,6 +126,14 @@ export class AddPasskeyModalComponent implements OnInit, OnChanges {
         this.successMessage = 'Password saved successfully!';
         setTimeout(() => {
           this.resetForm();
+          try {
+            if (created && created.categoryId && typeof created.categoryId === 'string') {
+              const matched = this.categories.find(c => c._id === created.categoryId);
+              if (matched) {
+                created.categoryId = matched;
+              }
+            }
+          } catch (e) { /* ignore */ }
           this.saved.emit(created);
           this.closeModal();
           this.isLoading = false;
