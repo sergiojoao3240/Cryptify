@@ -54,6 +54,14 @@
         <button class="export-pass-btn" (click)="exportPasskeys()" [disabled]="exporting" >Export Passwords</button>
       </div>
 
+      <!-- Add Passkey Modal -->
+      <app-add-passkey-modal
+        [isOpen]="addPasskeyModalOpen"
+        [activeVault]="activeVault"
+        (close)="closeAddPasskeyModal()"
+        (saved)="onPasskeySaved()"
+      ></app-add-passkey-modal>
+
       <div class="password-box">
 
         <!-- TABLE HEADER -->
@@ -73,11 +81,16 @@
           <div class="table-col-name">{{ p.name }}</div>
           <div class="table-col-category">{{ p.categoryId?.name || '-' }}</div>
           <div class="table-col-username">{{ p.username }}</div>
-          <div class="table-col-password">{{ getDisplayPassword(p._id, p.password) }}</div>
+          <div class="table-col-password">
+            <div class="password-value">{{ getDisplayPassword(p._id, p.password) }}</div>
+            <button *ngIf="visiblePasswords[p._id]" class="copy-overlay" (click)="copyPassword(p._id, p.password)" [title]="copiedPasswords[p._id] ? 'Copied' : 'Copy password'">
+              {{ copiedPasswords[p._id] ? '✓' : '📋' }}
+            </button>
+          </div>
 
           <div class="table-col-actions">
              <button class="action-btn" (click)="togglePasswordVisibility(p._id, p)" title="Show/Hide Password">
-                 <i class="fa-regular fa-eye">{{ visiblePasswords[p._id] ? '⌣' : '👁️'}}</i>
+                 <i class="fa-regular fa-eye">{{ visiblePasswords[p._id] ? '👁️‍🗨️' : '👁️'}}</i>
             </button>
             <button class="action-btn edit" (click)="editPasskey(p._id)" title="Edit">
               <i class="fa-regular fa-pen-to-square">✏️</i>

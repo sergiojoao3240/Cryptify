@@ -7,12 +7,13 @@ import { PasskeyService } from '../../services/passkey';
 import { Router, RouterLink } from '@angular/router';
 import { Passkey, Vault } from '../../models/interfaces';
 import { HttpResponse } from '@angular/common/http';
+import { AddPasskeyModalComponent } from './add-passkey-modal/add-passkey-modal.component';
 
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, AddPasskeyModalComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
@@ -25,8 +26,10 @@ export class Dashboard {
   searchQuery: string = '';
   userMenuOpen: boolean = false;
   vaultsPanelOpen: boolean = false;
+  addPasskeyModalOpen: boolean = false;
   exporting: boolean = false;
   visiblePasswords: { [key: string]: boolean } = {}; 
+  copiedPasswords: { [key: string]: boolean } = {};
   
   get activeVault$(): Vault | undefined {
     return this.activeVault;
@@ -102,6 +105,18 @@ export class Dashboard {
     this.vaultsPanelOpen = !this.vaultsPanelOpen;
   }
 
+  openAddPasskeyModal() {
+    this.addPasskeyModalOpen = true;
+  }
+
+  closeAddPasskeyModal() {
+    this.addPasskeyModalOpen = false;
+  }
+
+  onPasskeySaved() {
+    this.loadPasskeys();
+  }
+
   goToAccount() {
     this.userMenuOpen = false;
     this.router.navigate(['/profile']);
@@ -131,7 +146,7 @@ export class Dashboard {
   }
 
   addPasskey() {
-    this.router.navigate(['/passkey/add']);
+    this.openAddPasskeyModal();
   }
 
   exportPasskeys() {
@@ -190,6 +205,32 @@ export class Dashboard {
           console.error('Error fetching passkey:', err);
         }
       });
+    }
+  }
+
+  async copyPassword(passkeyId: string, password: string) {
+    if (!this.visiblePasswords[passkeyId]) return;
+
+    const text = password || '';
+    try {
+      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+
+      this.copiedPasswords[passkeyId] = true;
+      setTimeout(() => { this.copiedPasswords[passkeyId] = false; }, 2000);
+    } catch (err) {
+      console.error('Copy failed', err);
     }
   }
 

@@ -304,6 +304,51 @@
   justify-content: center;
 }
 
+/* Password column overlay copy button */
+.table-col-password {
+  position: relative;
+}
+
+.password-value {
+  display: block;
+  word-break: break-word;
+  /* add right padding so long passwords don't sit under the overlay button */
+  padding-right: 64px;
+}
+
+.copy-overlay {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.06);
+  color: #0077b6;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+
+.copy-overlay:hover {
+  background: rgba(238,247,255,0.95);
+  color: #005f8a;
+  transform: translateY(-50%) scale(1.03);
+}
+
+@media (max-width: 768px) {
+  .password-value {
+    padding-right: 52px;
+  }
+
+  .copy-overlay {
+    right: 8px;
+    padding: 5px 8px;
+    font-size: 13px;
+  }
+}
+
 .password-item {
   display: flex;
   justify-content: space-between;
@@ -396,6 +441,17 @@
 
 .action-btn.delete:hover {
   background: rgba(244, 92, 75, 0.499);
+}
+
+/* Copy action button */
+.action-btn.copy {
+  background: #e8f6ff;
+  color: #0077b6;
+}
+
+.action-btn.copy:hover {
+  background: #d0eefc;
+  transform: scale(1.06);
 }
 
 /* ============== SCROLLBAR STYLING ============== */

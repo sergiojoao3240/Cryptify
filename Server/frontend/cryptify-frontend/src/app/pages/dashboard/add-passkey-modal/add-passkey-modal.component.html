@@ -1,0 +1,123 @@
+<div class="modal-overlay" *ngIf="isOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h2>Add New Password</h2>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+
+    <!-- Modal Body -->
+    <form (ngSubmit)="onSubmit()" class="modal-body">
+      
+      <!-- Name Field -->
+      <div class="form-group">
+        <label for="name">Password Name *</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="formData.name"
+          name="name"
+          placeholder="e.g., Gmail, Netflix, etc."
+          required
+        />
+      </div>
+
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Username/Email *</label>
+        <input
+          type="text"
+          id="username"
+          [(ngModel)]="formData.username"
+          name="username"
+          placeholder="Enter your username or email"
+          required
+        />
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <div class="password-field">
+          <label for="password">Password *</label>
+          <button type="button" class="generate-btn" (click)="generatePassword()" title="Generate strong password">
+            🔄 Generate
+          </button>
+        </div>
+        <div class="password-input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            [(ngModel)]="formData.password"
+            name="password"
+            placeholder="Enter or generate a password"
+            required
+          />
+          <button
+            type="button"
+            class="show-password-btn"
+            (click)="togglePasswordVisibility()"
+            [title]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword ? '👁️‍🗨️' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Field -->
+      <div class="form-group">
+        <label for="category">Category</label>
+        <div class="category-select-row">
+          <select
+            id="category"
+            [(ngModel)]="formData.categoryId"
+            name="category"
+          >
+            <option value="">Select a category</option>
+            <option *ngFor="let cat of categories" [value]="cat._id">
+              {{ cat.name }}
+            </option>
+            <option value="__create__">+ Create new category...</option>
+          </select>
+          <button type="button" class="create-cat-inline" *ngIf="formData.categoryId === '__create__'" (click)="formData.categoryId = ''">
+            Cancel
+          </button>
+        </div>
+
+        <!-- Inline create category form (shown when select chooses create) -->
+        <div class="new-category-row" *ngIf="formData.categoryId === '__create__' || newCategoryName">
+          <input
+            type="text"
+            class="new-category-input"
+            placeholder="New category name"
+            [(ngModel)]="newCategoryName"
+            name="newCategoryName"
+          />
+          <button type="button" class="create-cat-btn" (click)="createCategory()" [disabled]="creatingCategory">
+            {{ creatingCategory ? 'Creating...' : 'Create' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="error-msg">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="success-msg">
+        {{ successMessage }}
+      </div>
+
+      <!-- Modal Actions -->
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-save" [disabled]="isLoading">
+          {{ isLoading ? 'Saving...' : 'Save Password' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

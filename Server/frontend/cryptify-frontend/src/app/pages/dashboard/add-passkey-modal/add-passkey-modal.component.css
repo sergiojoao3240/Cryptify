@@ -1,0 +1,369 @@
+/* ============== MODAL OVERLAY ============== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============== MODAL CONTENT ============== */
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============== MODAL HEADER ============== */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e5e5;
+  background: linear-gradient(135deg, #2b5876, #4e4376);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: white;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.1);
+}
+
+/* ============== MODAL BODY ============== */
+.modal-body {
+  padding: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* Category create inline row */
+.category-select-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.create-cat-inline {
+  background: none;
+  border: none;
+  color: #4e4376;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
+.new-category-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 0.6rem;
+}
+
+.new-category-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.create-cat-btn {
+  background: #4e4376;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.create-cat-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4e4376;
+  box-shadow: 0 0 0 3px rgba(78, 67, 118, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ============== PASSWORD FIELD ============== */
+.password-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.password-field label {
+  margin-bottom: 0;
+}
+
+.generate-btn {
+  background: #f0f0f7;
+  color: #4e4376;
+  border: 1px solid #d5d5d5;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generate-btn:hover {
+  background: #e0dff5;
+  border-color: #4e4376;
+}
+
+/* Password Input Wrapper */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.show-password-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.show-password-btn:hover {
+  color: #4e4376;
+}
+
+/* ============== MESSAGES ============== */
+.error-msg {
+  padding: 12px;
+  background: #ffe6e6;
+  color: #d9534f;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  border-left: 4px solid #d9534f;
+}
+
+.success-msg {
+  padding: 12px;
+  background: #e6ffe6;
+  color: #28a745;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  border-left: 4px solid #28a745;
+}
+
+/* ============== MODAL ACTIONS ============== */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e5e5;
+}
+
+.btn-cancel,
+.btn-save {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel {
+  background: #f0f0f7;
+  color: #4e4376;
+  border: 1px solid #d5d5d5;
+}
+
+.btn-cancel:hover {
+  background: #e0dff5;
+  border-color: #4e4376;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #2b5876, #4e4376);
+  color: white;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 67, 118, 0.3);
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============== RESPONSIVE DESIGN ============== */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .close-btn {
+    font-size: 1.8rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 9px 10px;
+    font-size: 16px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-cancel,
+  .btn-save {
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .modal-content {
+    width: 98%;
+  }
+
+  .modal-header {
+    padding: 0.8rem;
+  }
+
+  .modal-body {
+    padding: 0.8rem;
+  }
+
+  .password-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .generate-btn {
+    width: 100%;
+  }
+}
