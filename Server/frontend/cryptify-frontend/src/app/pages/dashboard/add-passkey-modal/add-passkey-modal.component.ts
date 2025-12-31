@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PasskeyService } from '../../../services/passkey';
@@ -12,11 +12,11 @@ import { CategoryService } from '../../../services/category';
   templateUrl: './add-passkey-modal.component.html',
   styleUrl: './add-passkey-modal.component.css',
 })
-export class AddPasskeyModalComponent {
+export class AddPasskeyModalComponent implements OnInit, OnChanges {
   @Input() isOpen: boolean = false;
   @Input() activeVault?: Vault;
   @Output() close = new EventEmitter<void>();
-  @Output() saved = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<any>();
 
   formData = {
     name: '',
@@ -36,19 +36,35 @@ export class AddPasskeyModalComponent {
   constructor(private passkeyService: PasskeyService, private categoryService: CategoryService) {}
 
   ngOnInit() {
-    this.loadCategories();
+    if (this.activeVault) {
+      this.loadCategories();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['activeVault'] && this.activeVault) {
+      this.loadCategories();
+    }
+    if (changes['isOpen'] && changes['isOpen'].currentValue && this.activeVault) {
+      this.loadCategories();
+    }
   }
 
   loadCategories() {
-    this.categoryService.getCategoriesOfVault(this.activeVault?._id || '').subscribe({
-        next: (response) => {
-            this.categories = response.results;
-        },
-        error: (err) => {
-            console.error('Error fetching categories:', err);
-        }
+    if (!this.activeVault?._id) {
+      this.categories = [];
+      return;
+    }
+
+    this.categoryService.getCategoriesOfVault(this.activeVault._id).subscribe({
+      next: (response) => {
+        this.categories = response.results;
+      },
+      error: (err) => {
+        console.error('Error fetching categories:', err);
+      }
     });
-  };
+  }
 
   generatePassword() {
     const length = 16;
@@ -81,19 +97,40 @@ export class AddPasskeyModalComponent {
 
 
     this.passkeyService.createPasskey(
-        this.formData.name,
-        this.activeVault._id,
-        this.formData.username,
-        this.formData.password,
-        this.formData.categoryId || undefined,
+      this.formData.name,
+      this.activeVault._id,
+      this.formData.username,
+      this.formData.password,
+      this.formData.categoryId || undefined,
     ).subscribe({
-      next: () => {
+      next: (resp: any) => {
+        const payload = resp.results || resp.data || resp || null;
+
+        // If backend returned a warning about duplicate password (did not create), treat as error
+        if (resp?.existingPasskeyId || resp?.warning || (resp?.message && String(resp.message).toLowerCase().includes('already used'))) {
+          this.errorMessage = resp.message || resp.warning || 'Password not created: duplicate password detected.';
+          this.isLoading = false;
+          console.warn('Create rejected by backend:', resp);
+          return;
+        }
+
+        // Determine created object (must contain an id)
+        const created = payload && (payload._id || payload.id) ? payload : (resp && (resp._id || resp.id) ? resp : null);
+        if (!created || !(created._id || created.id)) {
+          this.errorMessage = resp?.message || 'Password was not created.';
+          this.isLoading = false;
+          console.warn('No created passkey returned:', resp);
+          return;
+        }
+
         this.successMessage = 'Password saved successfully!';
         setTimeout(() => {
           this.resetForm();
-          this.saved.emit();
+          this.saved.emit(created);
           this.closeModal();
+          this.isLoading = false;
         }, 1500);
+        console.log('Created passkey:', created);
       },
       error: (err: any) => {
         this.errorMessage = err.error?.message || 'Error saving password. Please try again.';
@@ -117,11 +154,8 @@ export class AddPasskeyModalComponent {
     this.creatingCategory = true;
     this.errorMessage = '';
 
-    console.log(this.activeVault._id);
-
     this.categoryService.createCategory(name, this.activeVault._id).subscribe({
       next: (resp: any) => {
-        console.log('Category created:', resp);
         const created = resp.results || resp.data || resp;
         const cat = { _id: created._id || created.id || created, name: created.name || name } as Category;
         this.categories = [cat, ...this.categories];

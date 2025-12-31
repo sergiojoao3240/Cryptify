@@ -59,7 +59,7 @@
         [isOpen]="addPasskeyModalOpen"
         [activeVault]="activeVault"
         (close)="closeAddPasskeyModal()"
-        (saved)="onPasskeySaved()"
+        (saved)="onPasskeySaved($event)"
       ></app-add-passkey-modal>
 
       <div class="password-box">

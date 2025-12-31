@@ -83,9 +83,12 @@ const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: 
     let encrypted: string;
     let forceCreate = req.query.force === "true";
 
-    // Check if password is in use in other passkey in the same vault 
+    // Compute a deterministic hash of the plaintext password for duplicate detection
+    const passwordHash = crypto.createHash('sha256').update(String(password)).digest('hex');
+
+    // Check if password is in use in other passkey in the same vault
     if (!forceCreate) {
-        const existing = await PassKeys.findOne({ vaultId, hash: key });
+        const existing = await PassKeys.findOne({ vaultId, hash: passwordHash });
         if (existing) {
             return res.status(200).json({
                 warning: "Password already used in this vault.",
@@ -106,7 +109,7 @@ const createPassKey = asyncHandler(async (req: RequestExt, res: Response, next: 
         username,
         password: encrypted,
         vaultId,
-        hash: key,
+        hash: passwordHash,
         key: keyRaw,
         iv: iv.toString('hex'),
         lastUpdateUserId: req.user._id,

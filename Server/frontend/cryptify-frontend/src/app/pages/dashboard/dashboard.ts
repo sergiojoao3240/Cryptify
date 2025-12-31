@@ -113,7 +113,12 @@ export class Dashboard {
     this.addPasskeyModalOpen = false;
   }
 
-  onPasskeySaved() {
+  onPasskeySaved(created?: any) {
+    if (created && created._id) {
+      this.passkeys = [created, ...this.passkeys];
+      this.filterPasswords();
+      return;
+    }
     this.loadPasskeys();
   }
 
