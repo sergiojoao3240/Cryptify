@@ -44,6 +44,7 @@
   border-radius: 0.5rem;
   font-size: 1rem;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -57,6 +58,7 @@
   background-color: #4e4376;
   color: white;
   border: none;
+  margin-top: 5%;
   padding: 0.8rem;
   font-size: 1rem;
   border-radius: 0.7rem;

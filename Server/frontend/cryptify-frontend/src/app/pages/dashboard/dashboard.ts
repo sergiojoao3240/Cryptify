@@ -24,6 +24,7 @@ export class Dashboard {
   filteredPasskeys: Passkey[] = [];
   searchQuery: string = '';
   userMenuOpen: boolean = false;
+  vaultsPanelOpen: boolean = false;
   exporting: boolean = false;
   visiblePasswords: { [key: string]: boolean } = {}; 
   
@@ -95,6 +96,10 @@ export class Dashboard {
 
   toggleUserMenu() {
     this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  toggleVaultsPanel() {
+    this.vaultsPanelOpen = !this.vaultsPanelOpen;
   }
 
   goToAccount() {

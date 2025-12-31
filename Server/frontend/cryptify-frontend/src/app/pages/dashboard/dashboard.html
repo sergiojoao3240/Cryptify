@@ -2,6 +2,10 @@
 
   <!-- HEADER -->
   <header class="header">
+    <button class="menu-toggle" (click)="toggleVaultsPanel()" title="Toggle Vaults">
+      <i class="fa-solid fa-bars">☰</i>
+    </button>
+    
     <div class="logo">🔐 Cryptify</div>
 
     <div class="user-section">
@@ -24,7 +28,7 @@
   <div class="layout">
 
     <!-- LEFT PANEL - VAULTS -->
-    <aside class="vaults-panel">
+    <aside class="vaults-panel" [class.show]="vaultsPanelOpen">
       <h3 class="panel-title">📁 Vaults</h3>
 
       <div class="vault-list">
@@ -32,7 +36,7 @@
           *ngFor="let v of vaults" 
           class="vault-item" 
           [class.active]="activeVault?._id === v._id" 
-          (click)="selectVault(v)">
+          (click)="selectVault(v); vaultsPanelOpen = false">
           {{ v.name }}
         </button>
 
